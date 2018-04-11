@@ -7,6 +7,11 @@ import { VictoryAxis, VictoryChart, VictoryLine, VictoryLabel } from "victory-na
 const formatters = require('./formatters')
 
 class Elevation extends React.Component {
+  state = {
+    width: 0,
+    key: 1
+  }
+
   getYDomain(elevationProfile) {
     return elevationProfile.reduce((memo, item) => {
       return [Math.min(memo[0], item.elevation), Math.max(memo[1], item.elevation)]
@@ -22,14 +27,34 @@ class Elevation extends React.Component {
     })
   }
 
-  render() {
+  componentDidMount() {
     const {width} = Dimensions.get('window')
+    this.setState({
+      width
+    });
+
+    Dimensions.addEventListener('change', () => {
+      // Key parameter forces SVG to redraw on size change
+      const {width} = Dimensions.get('window')
+      this.setState({
+        width,
+        key: this.state.key + 1
+      });
+    });
+  }
+
+  render() {
     const data = this.formatElevationProfile()
     const yDomain = this.getYDomain(data)
 
     return (
       <View style={styles.elevation}>
-        <Svg height="70" width={width - 5}>
+        <Svg
+          height="70"
+          width={this.state.width - 5}
+          preserveAspectRatio="none"
+          key={this.state.key}
+        >
           <VictoryLabel
             x={0}
             y={5}
@@ -54,7 +79,7 @@ class Elevation extends React.Component {
             }}
             domainPadding={{x: 10, y: 2}}
             padding={{top: 0, bottom: 0, left: 35, right: 0}}
-            width={width}
+            width={this.state.width}
             height={70}
           />
         </Svg>

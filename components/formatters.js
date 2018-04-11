@@ -36,7 +36,7 @@ exports.getElevationGain = profile => {
 }
 
 exports.formatElevation = elevation => {
-  return `${exports.metersToFeet(elevation).toFixed()} feet`
+  return `${exports.metersToFeet(elevation).toFixed()} ft`
 }
 
 exports.formatAddressLines = address => {
