@@ -4,13 +4,16 @@ import { StyleSheet, Text } from 'react-native'
 import { MapView, Marker } from 'expo'
 
 const formatters = require('./formatters')
+const mapUtils = require('./map-utils')
 const config = require('../config.json')
 
 class Map extends React.Component {
   state = {
-    center: {
+    region: {
       latitude: config.initialCenterLat,
-      longitude: config.initialCenterLng
+      longitude: config.initialCenterLng,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
     },
     zoom: config.initialZoom,
   }
@@ -30,12 +33,6 @@ class Map extends React.Component {
   endMarkerDragEnd = e => {
     this.props.setEndLocation(e.nativeEvent.coordinate)
   }
-
-  // getDerivedStateFromProps(nextProps, prevState) {
-  //   if (nextProps.bounds && _.isEqual(nextProps.bounds, prevState.bounds)) {
-  //     this._map.setVisibleCoordinateBounds(nextProps.bounds.latitudeSW, nextProps.bounds.longitudeSW, nextProps.bounds.latitudeNE, nextProps.bounds.longitudeNE, 100, 40, 100, 40)
-  //   }
-  // }
 
   getStartMarker() {
     if (this.props.startCoords) {
@@ -77,18 +74,25 @@ class Map extends React.Component {
     }
   }
 
-  render() {
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.path && !_.isEqual(nextProps.path, prevState.path)) {
+      return {
+        path: nextProps.path,
+        region: mapUtils.getRegion(nextProps.path)
+      }
+    } else {
+      return null
+    }
+  }
 
+  render() {
     return (
       <MapView
-        style={{ flex: 1 }}
-        initialRegion={{
-          latitude: this.state.center.latitude,
-          longitude: this.state.center.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
+        style={styles.map}
+        region={this.state.region}
         onPress={this.onPress}
+        mapType="mutedStandard"
+        showsUserLocation={true}
       >
         {this.getStartMarker()}
         {this.getEndMarker()}

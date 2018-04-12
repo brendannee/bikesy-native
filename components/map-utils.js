@@ -1,43 +1,29 @@
+const turfBBox = require('@turf/bbox')
 const turfLength = require('@turf/length')
 
-exports.getBounds = polyline => {
-  const bounds = polyline.reduce((memo, point) => {
-    if (memo.latitudeSW === null) {
-      return {
-        latitudeSW: point.latitude,
-        longitudeSW: point.longitude,
-        latitudeNE: point.latitude,
-        longitudeNE: point.longitude,
-      }
-    }
-    memo.latitudeSW = Math.min(memo.latitudeSW, point.latitude)
-    memo.longitudeSW = Math.min(memo.longitudeSW, point.longitude)
-    memo.latitudeNE = Math.max(memo.latitudeNE, point.latitude)
-    memo.longitudeNE = Math.max(memo.longitudeNE, point.longitude)
+const polylineToGeoJSON = polyline => ({
+  type: 'Feature',
+  properties: {},
+  geometry: {
+    type: 'LineString',
+    coordinates: polyline
+  }
+})
 
-    return memo
-  }, {latitudeSW: null, longitudeSW: null, latitudeNE: null, longitudeNE: null})
+exports.getRegion = polyline => {
+  const bbox = turfBBox.default(polylineToGeoJSON(polyline))
+  const paddingPercent = 0.15;
 
-  return [
-    {
-      latitude: bounds.latitudeSW,
-      longitude: bounds.longitudeSW
-    },
-    {
-      latitude: bounds.latitudeNE,
-      longitude: bounds.longitudeNE
-    }
-  ]
+  const region = {
+    latitude: (bbox[2] - bbox[0]) / 2 + bbox[0],
+    longitude: (bbox[3] - bbox[1]) / 2 + bbox[1],
+    latitudeDelta: (bbox[2] - bbox[0]) * (1 + paddingPercent),
+    longitudeDelta: (bbox[3] - bbox[1]) * (1 + paddingPercent)
+  }
+
+  return region
 }
 
 exports.getDistanceMi = polyline => {
-  const linestring = {
-    "type": "Feature",
-    "properties": {},
-    "geometry": {
-      "type": "LineString",
-      "coordinates": polyline
-    }
-  }
-  return turfLength.default(linestring, {units: 'miles'})
+  return turfLength.default(polylineToGeoJSON(polyline), {units: 'miles'})
 }

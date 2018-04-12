@@ -18,7 +18,6 @@ import Summary from './components/summary'
 
 const api = require('./components/api')
 const errors = require('./components/errors')
-const mapUtils = require('./components/map-utils')
 const config = require('./config.json')
 
 export default class App extends React.Component {
@@ -43,11 +42,9 @@ export default class App extends React.Component {
     api.getRoute(this.state.startCoords, this.state.endCoords, this.state.scenario)
     .then(results => {
       const path = polyline.decode(results.path[0])
-      const bounds = mapUtils.getBounds(path)
       this.setState({
         directions: results.directions,
         elevationProfile: results.elevation_profile,
-        bounds,
         path
       })
     })
@@ -113,7 +110,6 @@ export default class App extends React.Component {
       endAddress: null,
       directions: null,
       elevationProfile: null,
-      bounds: null,
       path: null
     })
     this.showWelcomeAlert()
@@ -135,7 +131,6 @@ export default class App extends React.Component {
           endCoords={this.state.endCoords}
           startAddress={this.state.startAddress}
           endAddress={this.state.endAddress}
-          bounds={this.state.bounds}
           path={this.state.path}
         />
         {this._renderButtons()}
