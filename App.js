@@ -225,11 +225,8 @@ const styles = StyleSheet.create({
   },
   resultSummary: {
     height: 120,
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 1,
+    maxHeight: 120,
+    flex: 1,
     backgroundColor: '#FFFFFF',
     paddingTop: 4,
     paddingLeft: 8,
