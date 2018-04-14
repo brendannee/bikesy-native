@@ -16,7 +16,7 @@ exports.reverseGeocode = async coordinate => {
   const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${parameters}`)
   const result = await response.json()
 
-  if (!result || !result.features.length) {
+  if (!result || !result.features || !result.features.length) {
     throw new Error('No matching features found')
   }
 
@@ -29,7 +29,7 @@ exports.geocode = async address => {
   const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${parameters}`)
   const result = await response.json()
 
-  if (!result || !result.features.length) {
+  if (!result || !result.features || !result.features.length) {
     throw new Error('No matching features found')
   }
   const coordinate = {
