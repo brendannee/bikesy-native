@@ -13,6 +13,7 @@ import {
 } from 'react-native'
 import polyline from '@mapbox/polyline'
 
+import Directions from './components/directions'
 import Elevation from './components/elevation'
 import Map from './components/map'
 import Summary from './components/summary'
@@ -23,7 +24,8 @@ const config = require('./config.json')
 
 export default class App extends React.Component {
   state = {
-    scenario: '1'
+    scenario: '1',
+    directionsVisible: false
   }
 
   showWelcomeAlert = () => {
@@ -42,6 +44,10 @@ export default class App extends React.Component {
   updateRoute = () => {
     api.getRoute(this.state.startCoords, this.state.endCoords, this.state.scenario)
     .then(results => {
+      if (!this.state.startCoords) {
+        return
+      }
+
       const path = polyline.decode(results.path[0])
       this.setState({
         directions: results.directions,
@@ -124,18 +130,29 @@ export default class App extends React.Component {
     StatusBar.setHidden(true)
     return (
       <View style={styles.container}>
-        <Image source={require('./images/bikesy-logo.png')} style={styles.logo} />
-        <Map
-          setStartLocation={this.setStartLocation}
-          setEndLocation={this.setEndLocation}
-          startCoords={this.state.startCoords}
-          endCoords={this.state.endCoords}
-          startAddress={this.state.startAddress}
-          endAddress={this.state.endAddress}
-          path={this.state.path}
-        />
-        {this._renderButtons()}
+        <View style={styles.mapContainer}>
+          <Image source={require('./images/bikesy-logo.png')} style={styles.logo} />
+          <Map
+            setStartLocation={this.setStartLocation}
+            setEndLocation={this.setEndLocation}
+            startCoords={this.state.startCoords}
+            endCoords={this.state.endCoords}
+            startAddress={this.state.startAddress}
+            endAddress={this.state.endAddress}
+            path={this.state.path}
+          />
+          {this._renderClearButton()}
+          {this._renderDirectionsButton()}
+        </View>
         {this._renderResultSummary()}
+        <Directions
+          path={this.state.path}
+          elevationProfile={this.state.elevationProfile}
+          directions={this.state.directions}
+          endAddress={this.state.endAddress}
+          modalVisible={this.state.directionsVisible}
+          hideModal={() => this.setState({directionsVisible: false})}
+        />
       </View>
     )
   }
@@ -156,15 +173,29 @@ export default class App extends React.Component {
     }
   }
 
-  _renderButtons() {
+  _renderClearButton() {
     if (this.state.startCoords) {
       return (
-        <View style={styles.mapButton}>
+        <View style={styles.clearButton}>
           <Button
             onPress={this.clearRoute}
             title="Clear"
             color="#1089f5"
             accessibilityLabel="Clear all route information"
+          />
+        </View>
+      )
+    }
+  }
+
+  _renderDirectionsButton() {
+    if (this.state.path) {
+      return (
+        <View style={styles.directionsButton}>
+          <Button
+            onPress={() => this.setState({directionsVisible: true})}
+            title="Directions"
+            accessibilityLabel="Show directions"
           />
         </View>
       )
@@ -212,17 +243,27 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'stretch'
   },
+  mapContainer: {
+    flex: 1
+  },
   logo: {
     position: 'absolute',
     top: 35,
-    left: 20,
+    left: 15,
     zIndex: 1
   },
-  mapButton: {
+  clearButton: {
     position: 'absolute',
-    bottom: 125,
-    right: 5,
+    bottom: 10,
+    right: 10,
     zIndex: 1
+  },
+  directionsButton: {
+    position: 'absolute',
+    top: 35,
+    right: 15,
+    zIndex: 1,
+    backgroundColor: '#ffffff'
   },
   resultSummary: {
     height: 120,
