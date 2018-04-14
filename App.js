@@ -1,5 +1,6 @@
 import React from 'react'
-import { Alert,
+import {
+  Alert,
   AlertIOS,
   AppRegistry,
   Button,
@@ -8,8 +9,8 @@ import { Alert,
   StatusBar,
   StyleSheet,
   Text,
-  View} from 'react-native'
-
+  View
+} from 'react-native'
 import polyline from '@mapbox/polyline'
 
 import Elevation from './components/elevation'
@@ -79,7 +80,7 @@ export default class App extends React.Component {
       startCoords: coordinate
     }, () => {
       if (this.state.endCoords) {
-        this.updateRoute();
+        this.updateRoute()
       }
     })
     api.reverseGeocode(coordinate)

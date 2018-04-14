@@ -31,7 +31,7 @@ class Elevation extends React.Component {
     const {width} = Dimensions.get('window')
     this.setState({
       width
-    });
+    })
 
     Dimensions.addEventListener('change', () => {
       // Key parameter forces SVG to redraw on size change
@@ -39,8 +39,8 @@ class Elevation extends React.Component {
       this.setState({
         width,
         key: this.state.key + 1
-      });
-    });
+      })
+    })
   }
 
   render() {

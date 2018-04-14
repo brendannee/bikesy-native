@@ -39,6 +39,6 @@ const styles = StyleSheet.create({
     paddingBottom: 3,
     paddingTop: 3
   }
-});
+})
 
 module.exports = Summary

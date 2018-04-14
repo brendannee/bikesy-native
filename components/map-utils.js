@@ -12,7 +12,7 @@ const polylineToGeoJSON = polyline => ({
 
 exports.getRegion = polyline => {
   const bbox = turfBBox.default(polylineToGeoJSON(polyline))
-  const paddingPercent = 0.15;
+  const paddingPercent = 0.15
 
   const region = {
     latitude: (bbox[2] - bbox[0]) / 2 + bbox[0],

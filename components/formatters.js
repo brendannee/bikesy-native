@@ -25,7 +25,7 @@ exports.formatTime = miles => {
 exports.formatDistance = distance => distance.toFixed(1)
 
 exports.getElevationGain = profile => {
-  let totalElevGain = 0;
+  let totalElevGain = 0
   profile.forEach((p, idx) => {
     if (idx < profile.length - 1 && profile[idx][1] < profile[idx + 1][1]) {
       totalElevGain += profile[idx + 1][1] - profile[idx][1]
