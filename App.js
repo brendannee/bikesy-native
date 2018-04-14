@@ -14,7 +14,6 @@ import {
 import polyline from '@mapbox/polyline'
 
 import Directions from './components/directions'
-import Elevation from './components/elevation'
 import Map from './components/map'
 import Summary from './components/summary'
 
@@ -144,7 +143,10 @@ export default class App extends React.Component {
           {this._renderClearButton()}
           {this._renderDirectionsButton()}
         </View>
-        {this._renderResultSummary()}
+        <Summary
+          path={this.state.path}
+          elevationProfile={this.state.elevationProfile}
+        />
         <Directions
           path={this.state.path}
           elevationProfile={this.state.elevationProfile}
@@ -155,22 +157,6 @@ export default class App extends React.Component {
         />
       </View>
     )
-  }
-
-  _renderResultSummary() {
-    if (this.state.path) {
-      return (
-        <View style={styles.resultSummary}>
-          <Summary
-            path={this.state.path}
-            elevationProfile={this.state.elevationProfile}
-          />
-          <Elevation
-            elevationProfile={this.state.elevationProfile}
-          />
-        </View>
-      )
-    }
   }
 
   _renderClearButton() {
@@ -254,9 +240,10 @@ const styles = StyleSheet.create({
   },
   clearButton: {
     position: 'absolute',
-    bottom: 10,
+    bottom: 5,
     right: 10,
-    zIndex: 1
+    zIndex: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)'
   },
   directionsButton: {
     position: 'absolute',
@@ -264,15 +251,6 @@ const styles = StyleSheet.create({
     right: 15,
     zIndex: 1,
     backgroundColor: '#ffffff'
-  },
-  resultSummary: {
-    height: 120,
-    maxHeight: 120,
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    paddingTop: 4,
-    paddingLeft: 8,
-    paddingRight: 8
   },
   addressSection: {
     flex: 1,
