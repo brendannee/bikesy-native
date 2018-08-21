@@ -8,7 +8,7 @@ import {
 } from 'react-native'
 import { MapView, Marker } from 'expo'
 import {MaterialIcons, Entypo} from '@expo/vector-icons'
-import Summary from './summary'
+import Summary from './Summary'
 
 import _ from 'lodash'
 const formatters = require('../services/formatters')

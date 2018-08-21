@@ -6,7 +6,7 @@ import {
   SafeAreaView
  } from 'react-native'
 
-import Elevation from './elevation'
+import Elevation from './Elevation'
 
 const formatters = require('../services/formatters')
 const mapUtils = require('../services/map-utils')

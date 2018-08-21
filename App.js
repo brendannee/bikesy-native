@@ -3,22 +3,18 @@ import {
   Alert,
   AlertIOS,
   AppRegistry,
-  Image,
-  ScrollView ,
   StatusBar,
   StyleSheet,
   Text,
   View
 } from 'react-native'
-
-import Directions from './components/directions'
-import Map from './components/map'
+import Directions from './components/Directions'
+import Map from './components/Map'
+import Errors from './components/Errors'
 
 import polyline from '@mapbox/polyline'
 
 const api = require('./services/api')
-const errors = require('./components/errors')
-const config = require('./config.json')
 
 import globalStyles from './styles/styles'
 
@@ -55,13 +51,13 @@ export default class App extends React.Component {
         path
       })
     })
-    .catch(errors.handleFetchError)
+    .catch(Errors.handleFetchError)
   }
 
   setStartLocationFromUserLocation = () => {
     navigator.geolocation.getCurrentPosition(result => {
       this.setStartLocation(result.coords)
-    }, errors.handleGeoLocationError)
+    }, Errors.handleGeoLocationError)
   }
 
   setStartLocationFromTextInput = () => {
@@ -76,7 +72,7 @@ export default class App extends React.Component {
             startCoords: coordinate
           })
         })
-        .catch(errors.handleError)
+        .catch(Errors.handleError)
       }
     )
   }
@@ -93,7 +89,7 @@ export default class App extends React.Component {
     .then(startAddress => {
       this.setState({startAddress})
     })
-    .catch(errors.handleError)
+    .catch(Errors.handleError)
   }
 
   setEndLocation = coordinate => {
@@ -106,7 +102,7 @@ export default class App extends React.Component {
     .then(endAddress => {
       this.setState({endAddress})
     })
-    .catch(errors.handleError)
+    .catch(Errors.handleError)
   }
 
   clearRoute = () => {
