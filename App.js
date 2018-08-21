@@ -13,7 +13,6 @@ import {
 
 import Directions from './components/directions'
 import Map from './components/map'
-import Summary from './components/summary'
 
 import polyline from '@mapbox/polyline'
 
@@ -131,22 +130,16 @@ export default class App extends React.Component {
     StatusBar.setHidden(true)
     return (
       <View style={styles.container}>
-        <View style={styles.mapContainer}>
-          <Image source={require('./assets/images/bikesy-logo.png')} style={styles.logo} />
-          <Map
-            setStartLocation={this.setStartLocation}
-            setEndLocation={this.setEndLocation}
-            startCoords={this.state.startCoords}
-            endCoords={this.state.endCoords}
-            startAddress={this.state.startAddress}
-            endAddress={this.state.endAddress}
-            path={this.state.path}
-            clearRoute={this.clearRoute}
-            showDirections={() => {this.setState({directionsVisible: true})}}
-          />
-        </View>
-        <Summary
+        <Map
+          setStartLocation={this.setStartLocation}
+          setEndLocation={this.setEndLocation}
+          startCoords={this.state.startCoords}
+          endCoords={this.state.endCoords}
+          startAddress={this.state.startAddress}
+          endAddress={this.state.endAddress}
           path={this.state.path}
+          clearRoute={this.clearRoute}
+          showDirections={() => {this.setState({directionsVisible: true})}}
           elevationProfile={this.state.elevationProfile}
         />
         <Directions
@@ -201,10 +194,6 @@ const styles = StyleSheet.create(Object.assign({}, globalStyles, {
   container: {
     flex: 1,
     alignItems: 'stretch'
-  },
-
-  mapContainer: {
-    flex: 1
   },
 
   addressSection: {

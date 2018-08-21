@@ -3,10 +3,12 @@ import {
   View,
   StyleSheet,
   Text,
+  Image,
   TouchableOpacity
 } from 'react-native'
 import { MapView, Marker } from 'expo'
 import {MaterialIcons, Entypo} from '@expo/vector-icons'
+import Summary from './summary'
 
 import _ from 'lodash'
 const formatters = require('../services/formatters')
@@ -128,6 +130,7 @@ class Map extends React.Component {
   render() {
     return (
       <View style={styles.map}>
+        <Image source={require('../assets/images/bikesy-logo.png')} style={styles.logo} />
         <MapView
           style={styles.map}
           region={this.state.region}
@@ -147,6 +150,10 @@ class Map extends React.Component {
         </MapView>
         {this._renderClearButton()}
         {this._renderDirectionsButton()}
+        <Summary
+          path={this.props.path}
+          elevationProfile={this.props.elevationProfile}
+        />
       </View>
     )
   }
