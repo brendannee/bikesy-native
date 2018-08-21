@@ -130,7 +130,7 @@ export default class App extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.mapContainer}>
-          <Image source={require('./images/bikesy-logo.png')} style={styles.logo} />
+          <Image source={require('./assets/images/bikesy-logo.png')} style={styles.logo} />
           <Map
             setStartLocation={this.setStartLocation}
             setEndLocation={this.setEndLocation}
