@@ -1,17 +1,21 @@
 import React from 'react'
 import {
-  Button,
   Modal,
   StyleSheet,
   Text,
-  View
+  View,
+  ScrollView,
+  Image,
+  TouchableOpacity,
 } from 'react-native'
+import {Entypo} from '@expo/vector-icons'
 
-const formatters = require('./formatters')
-const mapUtils = require('./map-utils')
+const formatters = require('../services/formatters')
+const mapUtils = require('../services/map-utils')
+
+import globalStyles from '../styles/styles'
 
 class Directions extends React.Component {
-
   formatDirections() {
     if (!this.props.directions) {
       return ''
@@ -20,7 +24,7 @@ class Directions extends React.Component {
     const directionsList = this.props.directions.reduce((memo, direction, idx) => {
       if (direction[1] !== 'nameless') {
         memo.push(<View style={styles.directionStep} key={idx}>
-          <Text>
+          <Text style={styles.directionStepText}>
             <Text style={styles.directionStepComponent}>{direction[0]}</Text> on <Text style={styles.directionStepComponent}>{direction[1]}</Text>
           </Text>
         </View>)
@@ -30,7 +34,7 @@ class Directions extends React.Component {
 
     directionsList.push((
       <View style={styles.directionStep} key="final">
-        <Text>
+        <Text style={styles.directionStepText}>
           <Text style={styles.directionStepComponent}>arrive</Text> at <Text style={styles.directionStepComponent}>{this.props.endAddress}</Text>
         </Text>
       </View>
@@ -52,34 +56,35 @@ class Directions extends React.Component {
         animationType="slide"
         transparent={false}
         visible={this.props.modalVisible}
-        onRequestClose={() => {
-          alert('Modal has been closed.')
-        }}>
+        onRequestClose={() => alert('Modal has been closed.')}
+      >
         <View style={styles.directions}>
-          <Button
-            onPress={() => {
-              this.props.hideModal()
-            }}
-            title="Map"
-            accessibilityLabel="View Route Map"
-            style={styles.mapButton}
-          />
-
-          <Text style={styles.directionTitle}>Directions to {this.props.endAddress}</Text>
-          <View style={styles.summary}>
-            <Text style={styles.resultText}>{totalDistance} miles, {totalTime}</Text>
-            <Text style={styles.elevationText}>{totalElevGain} of total climbing</Text>
-          </View>
-          <Text>{this.formatDirections()}</Text>
-
-          <Text style={styles.disclaimer}>We offer no guarantee regarding roadway conditions or safety of the proposed routes. Use your best judgment when choosing a route. Obey all vehicle code provisions.</Text>
+          <Image source={require('../assets/images/bikesy-logo.png')} style={styles.logo} />
+          <ScrollView style={styles.directionsContent}>
+            <Text style={styles.directionTitle}>Directions to {this.props.endAddress}</Text>
+            <View style={styles.summary}>
+              <Text style={styles.summaryText}>{totalDistance} miles, {totalTime}</Text>
+              <Text style={styles.summaryText}>{totalElevGain} of total climbing</Text>
+            </View>
+            {this.formatDirections()}
+            <Text style={styles.disclaimer}>We offer no guarantee regarding roadway conditions or safety of the proposed routes. Use your best judgment when choosing a route. Obey all vehicle code provisions.</Text>
+          </ScrollView>
+          <TouchableOpacity
+           onPress={this.props.hideModal}
+           style={styles.directionsButton}
+          >
+            <View style={styles.button}>
+              <Entypo name="map" size={20} style={styles.buttonIcon} />
+              <Text style={styles.buttonText}>View Directions</Text>
+            </View>
+          </TouchableOpacity>
         </View>
       </Modal>
     )
   }
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create(Object.assign({}, globalStyles, {
   directions: {
     paddingTop: 40,
     paddingRight: 15,
@@ -87,31 +92,43 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     flex: 1,
   },
-  mapButton: {
 
+  directionsContent: {
+    marginTop: 60
   },
+
   directionTitle: {
-    fontSize: 22,
-    paddingBottom: 10
-  },
-  summary: {
     fontSize: 18,
     paddingBottom: 10
   },
+
+  summary: {
+    paddingBottom: 10
+  },
+
+  summaryText: {
+    color: '#6D6D6D'
+  },
+
   directionStep: {
-    paddingTop: 20,
-    fontSize: 18
+    paddingTop: 12,
   },
+
+  directionStepText: {
+    color: '#6D6D6D'
+  },
+
   directionStepComponent: {
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    color: '#273443'
   },
+
   disclaimer: {
-    position: 'absolute',
-    bottom: 15,
-    zIndex: 1,
     fontSize: 10,
-    padding: 15
+    marginTop: 30,
+    marginBottom: 20,
+    color: '#898989'
   }
-})
+}))
 
 module.exports = Directions

@@ -4,7 +4,7 @@ import { Dimensions, StyleSheet, View } from 'react-native'
 import { Svg } from 'expo'
 import { VictoryAxis, VictoryChart, VictoryLine, VictoryLabel } from "victory-native"
 
-const formatters = require('./formatters')
+const formatters = require('../services/formatters')
 
 class Elevation extends React.Component {
   state = {

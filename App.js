@@ -3,7 +3,6 @@ import {
   Alert,
   AlertIOS,
   AppRegistry,
-  Button,
   Image,
   ScrollView ,
   StatusBar,
@@ -11,15 +10,18 @@ import {
   Text,
   View
 } from 'react-native'
-import polyline from '@mapbox/polyline'
 
 import Directions from './components/directions'
 import Map from './components/map'
 import Summary from './components/summary'
 
-const api = require('./components/api')
+import polyline from '@mapbox/polyline'
+
+const api = require('./services/api')
 const errors = require('./components/errors')
 const config = require('./config.json')
+
+import globalStyles from './styles/styles'
 
 export default class App extends React.Component {
   state = {
@@ -139,9 +141,9 @@ export default class App extends React.Component {
             startAddress={this.state.startAddress}
             endAddress={this.state.endAddress}
             path={this.state.path}
+            clearRoute={this.clearRoute}
+            showDirections={() => {this.setState({directionsVisible: true})}}
           />
-          {this._renderClearButton()}
-          {this._renderDirectionsButton()}
         </View>
         <Summary
           path={this.state.path}
@@ -157,35 +159,6 @@ export default class App extends React.Component {
         />
       </View>
     )
-  }
-
-  _renderClearButton() {
-    if (this.state.startCoords) {
-      return (
-        <View style={styles.clearButton}>
-          <Button
-            onPress={this.clearRoute}
-            title="Clear"
-            color="#1089f5"
-            accessibilityLabel="Clear all route information"
-          />
-        </View>
-      )
-    }
-  }
-
-  _renderDirectionsButton() {
-    if (this.state.path) {
-      return (
-        <View style={styles.directionsButton}>
-          <Button
-            onPress={() => this.setState({directionsVisible: true})}
-            title="Directions"
-            accessibilityLabel="Show directions"
-          />
-        </View>
-      )
-    }
   }
 
   _renderAddresses() {
@@ -224,48 +197,33 @@ export default class App extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create(Object.assign({}, globalStyles, {
   container: {
     flex: 1,
     alignItems: 'stretch'
   },
+
   mapContainer: {
     flex: 1
   },
-  logo: {
-    position: 'absolute',
-    top: 35,
-    left: 15,
-    zIndex: 1
-  },
-  clearButton: {
-    position: 'absolute',
-    bottom: 5,
-    right: 10,
-    zIndex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.7)'
-  },
-  directionsButton: {
-    position: 'absolute',
-    top: 35,
-    right: 15,
-    zIndex: 1,
-    backgroundColor: '#ffffff'
-  },
+
   addressSection: {
     flex: 1,
     flexDirection: 'row'
   },
+
   addressContainer: {
     flex: 1,
     padding: 5
   },
+
   addressLabel: {
     fontSize: 10,
     color: '#8b8b8b'
   },
+
   address: {
     fontSize: 11,
     color: '#414141'
-  }
-})
+  },
+}))

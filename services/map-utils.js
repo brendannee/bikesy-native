@@ -17,7 +17,7 @@ exports.getRegion = polyline => {
   const region = {
     latitude: (bbox[2] - bbox[0]) / 2 + bbox[0],
     longitude: (bbox[3] - bbox[1]) / 2 + bbox[1],
-    latitudeDelta: (bbox[2] - bbox[0]) * (1 + paddingPercent),
+    latitudeDelta: (bbox[2] - bbox[0]) * (1 + paddingPercent * 3),
     longitudeDelta: (bbox[3] - bbox[1]) * (1 + paddingPercent)
   }
 

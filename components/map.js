@@ -1,11 +1,19 @@
-import _ from 'lodash'
 import React from 'react'
-import { StyleSheet, Text } from 'react-native'
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity
+} from 'react-native'
 import { MapView, Marker } from 'expo'
+import {MaterialIcons, Entypo} from '@expo/vector-icons'
 
-const formatters = require('./formatters')
-const mapUtils = require('./map-utils')
+import _ from 'lodash'
+const formatters = require('../services/formatters')
+const mapUtils = require('../services/map-utils')
 const config = require('../config.json')
+
+import globalStyles from '../styles/styles'
 
 class Map extends React.Component {
   state = {
@@ -85,27 +93,76 @@ class Map extends React.Component {
     }
   }
 
+  _renderClearButton() {
+    if (this.props.startCoords) {
+      return (
+        <TouchableOpacity
+         onPress={this.props.clearRoute}
+         style={styles.clearButton}
+        >
+          <View style={styles.button}>
+            <Entypo name="trash" size={20} style={styles.buttonIcon} />
+            <Text style={styles.buttonText}>Clear</Text>
+          </View>
+        </TouchableOpacity>
+      )
+    }
+  }
+
+  _renderDirectionsButton() {
+    if (this.props.path) {
+      return (
+        <TouchableOpacity
+         onPress={this.props.showDirections}
+         style={styles.directionsButton}
+        >
+          <View style={styles.button}>
+            <MaterialIcons name="directions" size={20} style={styles.buttonIcon} />
+            <Text style={styles.buttonText}>View Directions</Text>
+          </View>
+        </TouchableOpacity>
+      )
+    }
+  }
+
   render() {
     return (
-      <MapView
-        style={styles.map}
-        region={this.state.region}
-        onPress={this.onPress}
-        mapType="mutedStandard"
-        showsUserLocation={true}
-      >
-        {this.getStartMarker()}
-        {this.getEndMarker()}
-        {this.getRouteLine()}
-      </MapView>
+      <View style={styles.map}>
+        <MapView
+          style={styles.map}
+          region={this.state.region}
+          onPress={this.onPress}
+          mapType="mutedStandard"
+          showsUserLocation={true}
+          mapPadding = {{
+            top: 105,
+            right: 15,
+            bottom: 10,
+            left: 15
+          }}
+        >
+          {this.getStartMarker()}
+          {this.getEndMarker()}
+          {this.getRouteLine()}
+        </MapView>
+        {this._renderClearButton()}
+        {this._renderDirectionsButton()}
+      </View>
     )
   }
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create(Object.assign({}, globalStyles, {
   map: {
     flex: 1
-  }
-})
+  },
+
+  clearButton: {
+    position: 'absolute',
+    top: 35,
+    right: 15,
+    zIndex: 1,
+  },
+}))
 
 module.exports = Map

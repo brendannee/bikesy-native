@@ -1,10 +1,15 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView
+ } from 'react-native'
 
 import Elevation from './elevation'
 
-const formatters = require('./formatters')
-const mapUtils = require('./map-utils')
+const formatters = require('../services/formatters')
+const mapUtils = require('../services/map-utils')
 
 class Summary extends React.Component {
   render() {
@@ -32,31 +37,32 @@ class Summary extends React.Component {
 
 const styles = StyleSheet.create({
   resultSummary: {
-    height: 120,
-    maxHeight: 120,
-    flex: 1,
+    height: 130,
+    maxHeight: 130,
     backgroundColor: '#FFFFFF',
-    paddingTop: 4,
+    paddingTop: 2,
+    paddingBottom: 4,
     paddingLeft: 8,
     paddingRight: 8
   },
+
   overview: {
-    flex: 1,
     flexDirection:'row',
     paddingBottom: 5,
     justifyContent: 'space-between',
   },
+
   resultText: {
-    fontSize: 18,
-    color: '#111111',
-    fontWeight: 'bold',
+    fontSize: 16,
+    color: '#273443',
     paddingBottom: 3,
     paddingTop: 2
   },
+
   elevationText: {
     fontSize: 16,
-    color: '#111111',
-    paddingBottom: 3,
+    color: '#273443',
+    paddingBottom: 10,
     paddingTop: 3
   }
 })
