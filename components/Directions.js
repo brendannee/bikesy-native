@@ -1,4 +1,6 @@
-import React from 'react'
+/* @flow */
+
+import React, { Component } from 'react'
 import {
   Modal,
   StyleSheet,
@@ -15,9 +17,22 @@ const mapUtils = require('../services/map-utils')
 
 import globalStyles from '../styles/styles'
 
-class Directions extends React.Component {
+type Props = {
+  directions?: Array<mixed>,
+  path: string,
+  endAddress: string,
+  elevationProfile: mixed,
+  modalVisible: boolean,
+  hideModal: () => mixed
+}
+
+class Directions extends Component<Props> {
+  constructor(props: Props) {
+    super(props)
+  }
+
   formatDirections() {
-    if (!this.props.directions) {
+    if (!this.props.directions || this.props.directions.length === 0) {
       return ''
     }
 

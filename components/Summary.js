@@ -1,4 +1,6 @@
-import React from 'react'
+/* @flow */
+
+import React, { Component } from 'react'
 import {
   StyleSheet,
   Text,
@@ -11,7 +13,12 @@ import Elevation from './Elevation'
 const formatters = require('../services/formatters')
 const mapUtils = require('../services/map-utils')
 
-class Summary extends React.Component {
+type Props = {
+  path: Array<[number, number]>,
+  elevationProfile: Array<[number, number]>
+}
+
+class Summary extends Component<Props> {
   render() {
     if (!this.props.path) {
       return null

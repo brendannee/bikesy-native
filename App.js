@@ -1,4 +1,6 @@
-import React from 'react'
+/* @flow */
+
+import React, { Component } from 'react'
 import {
   Alert,
   AlertIOS,
@@ -18,13 +20,32 @@ const api = require('./services/api')
 
 import globalStyles from './styles/styles'
 
-export default class App extends React.Component {
-  state = {
-    scenario: '1',
-    directionsVisible: false
+type Props = {}
+
+type State = {
+  scenario: string,
+  directionsVisible: boolean,
+  startCoords?: mixed,
+  startAddress?: string,
+  endAddress?: string,
+  endCoords?: mixed,
+  directions?: mixed,
+  elevationProfile?: Array<[number, number]>,
+  path?: string
+}
+
+export default class App extends Component<Props, State> {
+  constructor(props: Props) {
+    super(props)
+
+    this.state = {
+      scenario: '1',
+      directionsVisible: false
+    }
   }
 
-  showWelcomeAlert = () => {
+
+  showWelcomeAlert() {
     Alert.alert(
       'Welcome to Bikesy',
       'We\'ll find you the best bike route. Where do you want to start?',
@@ -37,8 +58,9 @@ export default class App extends React.Component {
     )
   }
 
-  updateRoute = () => {
-    api.getRoute(this.state.startCoords, this.state.endCoords, this.state.scenario)
+  updateRoute() {
+    const { startCoords, endCoords, scenario } = this.state
+    api.getRoute(startCoords, endCoords, scenario)
     .then(results => {
       if (!this.state.startCoords) {
         return
@@ -54,13 +76,13 @@ export default class App extends React.Component {
     .catch(Errors.handleFetchError)
   }
 
-  setStartLocationFromUserLocation = () => {
+  setStartLocationFromUserLocation() {
     navigator.geolocation.getCurrentPosition(result => {
       this.setStartLocation(result.coords)
     }, Errors.handleGeoLocationError)
   }
 
-  setStartLocationFromTextInput = () => {
+  setStartLocationFromTextInput() {
     AlertIOS.prompt(
       'Enter a start address',
       null,
@@ -77,7 +99,7 @@ export default class App extends React.Component {
     )
   }
 
-  setStartLocation = coordinate => {
+  setStartLocation(coordinate) {
     this.setState({
       startCoords: coordinate
     }, () => {
@@ -92,7 +114,7 @@ export default class App extends React.Component {
     .catch(Errors.handleError)
   }
 
-  setEndLocation = coordinate => {
+  setEndLocation(coordinate) {
     this.setState({
       endCoords: coordinate
     },
@@ -105,15 +127,15 @@ export default class App extends React.Component {
     .catch(Errors.handleError)
   }
 
-  clearRoute = () => {
+  clearRoute() {
     this.setState({
-      startCoords: null,
-      endCoords: null,
-      startAddress: null,
-      endAddress: null,
-      directions: null,
-      elevationProfile: null,
-      path: null
+      startCoords: undefined,
+      endCoords: undefined,
+      startAddress: undefined,
+      endAddress: undefined,
+      directions: undefined,
+      elevationProfile: undefined,
+      path: undefined
     })
     this.showWelcomeAlert()
   }

@@ -1,15 +1,30 @@
+/* @flow */
+
+import React, { Component } from 'react'
 import _ from 'lodash'
-import React from 'react'
 import { Dimensions, StyleSheet, View } from 'react-native'
 import { Svg } from 'expo'
 import { VictoryAxis, VictoryChart, VictoryLine, VictoryLabel } from "victory-native"
 
 const formatters = require('../services/formatters')
 
-class Elevation extends React.Component {
-  state = {
-    width: 0,
-    key: 1
+type Props = {
+  elevationProfile: Array<[number, number]>
+}
+
+type State = {
+  width: number,
+  key: number
+}
+
+class Elevation extends Component<Props, State> {
+  constructor(props: Props) {
+    super(props)
+
+    this.state = {
+      width: 0,
+      key: 1
+    }
   }
 
   getYDomain(elevationProfile) {

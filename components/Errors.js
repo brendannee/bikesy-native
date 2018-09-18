@@ -1,3 +1,5 @@
+/* @flow */
+
 import {
   Alert
 } from 'react-native'
@@ -29,7 +31,7 @@ exports.handleError = (err) => {
 exports.handleGeoLocationError = (err) => {
   console.error(err)
   Alert.alert(
-    'Unable to geolocation you',
+    'Unable to geolocate you',
     'Choose a start location by clicking on the map',
     [
       {text: 'OK'},

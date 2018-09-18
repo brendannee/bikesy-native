@@ -1,4 +1,6 @@
-import React from 'react'
+/* @flow */
+
+import React, { Component } from 'react'
 import {
   View,
   StyleSheet,
@@ -17,18 +19,43 @@ const config = require('../config.json')
 
 import globalStyles from '../styles/styles'
 
-class Map extends React.Component {
-  state = {
-    region: {
-      latitude: config.initialCenterLat,
-      longitude: config.initialCenterLng,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
-    },
-    zoom: config.initialZoom,
+type Props = {
+  startCoords: mixed,
+  endCoords: mixed,
+  setStartLocation: (mixed) => mixed,
+  setEndLocation: (mixed) => mixed,
+  startAddress: string,
+  endAddress: string,
+  path: Array<[number, number]>,
+  elevationProfile: mixed
+}
+
+type State = {
+  region: {
+    latitude: number,
+    longitude: number,
+    latitudeDelta: number,
+    longitudeDelta: number
+  },
+  zoom: number
+}
+
+class Map extends Component<Props, State> {
+  constructor(props: Props) {
+    super(props)
+
+    this.state = {
+      region: {
+        latitude: config.initialCenterLat,
+        longitude: config.initialCenterLng,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      },
+      zoom: config.initialZoom,
+    }
   }
 
-  onPress = e => {
+  onPress(e) {
     if (!this.props.startCoords) {
       this.props.setStartLocation(e.nativeEvent.coordinate)
     } else if (!this.props.endCoords) {
@@ -36,17 +63,17 @@ class Map extends React.Component {
     }
   }
 
-  startMarkerDragEnd = e => {
+  startMarkerDragEnd(e) {
     this.props.setStartLocation(e.nativeEvent.coordinate)
   }
 
-  endMarkerDragEnd = e => {
+  endMarkerDragEnd(e) {
     this.props.setEndLocation(e.nativeEvent.coordinate)
   }
 
   getStartMarker() {
     if (this.props.startCoords) {
-      return (<MapView.Marker
+      return (<Marker
         coordinate={this.props.startCoords}
         title="Start"
         description={formatters.formatAddressLines(this.props.startAddress)}
@@ -59,14 +86,16 @@ class Map extends React.Component {
 
   getEndMarker() {
     if (this.props.endCoords) {
-      return (<MapView.Marker
-        coordinate={this.props.endCoords}
-        title="End"
-        description={formatters.formatAddressLines(this.props.endAddress)}
-        pinColor="#cf3043"
-        draggable
-        onDragEnd={this.endMarkerDragEnd}
-      />)
+      return (
+        <Marker
+          coordinate={this.props.endCoords}
+          title="End"
+          description={formatters.formatAddressLines(this.props.endAddress)}
+          pinColor="#cf3043"
+          draggable
+          onDragEnd={this.endMarkerDragEnd}
+        />
+      )
     }
   }
 
@@ -76,11 +105,13 @@ class Map extends React.Component {
         latitude: coord[0],
         longitude: coord[1]
       }))
-      return (<MapView.Polyline
-    		coordinates={coordinates}
-    		strokeColor="#ff6712"
-    		strokeWidth={3}
-    	/>)
+      return (
+        <MapView.Polyline
+      		coordinates={coordinates}
+      		strokeColor="#ff6712"
+      		strokeWidth={3}
+      	/>
+      )
     }
   }
 

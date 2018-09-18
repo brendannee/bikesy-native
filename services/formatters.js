@@ -1,3 +1,5 @@
+/* @flow */
+
 const config = require('../config.json')
 const mapUtils = require('./map-utils')
 

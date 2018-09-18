@@ -1,3 +1,5 @@
+/* @flow */
+
 const config = require('../config.json')
 
 exports.getRoute = async (startLocation, endLocation, scenario) => {

@@ -1,3 +1,5 @@
+/* @flow */
+
 const turfBBox = require('@turf/bbox')
 const turfLength = require('@turf/length')
 
