@@ -2,9 +2,8 @@
 
 import React, { Component } from 'react'
 import _ from 'lodash'
-import { Dimensions, StyleSheet, View } from 'react-native'
-import { Svg } from 'expo'
-import { VictoryAxis, VictoryChart, VictoryLine, VictoryLabel } from "victory-native"
+import { Dimensions, StyleSheet, View, Text } from 'react-native'
+import { VictoryLine } from "victory-native"
 
 const formatters = require('../services/formatters')
 
@@ -61,43 +60,29 @@ class Elevation extends Component<Props, State> {
   render() {
     const data = this.formatElevationProfile()
     const yDomain = this.getYDomain(data)
+    const {width, key} = this.state
 
     return (
       <View style={styles.elevation}>
-        <Svg
-          height="70"
-          width={this.state.width - 5}
-          preserveAspectRatio="none"
-          key={this.state.key}
-        >
-          <VictoryLabel
-            x={0}
-            y={5}
-            text={`${Math.round(yDomain[1])} ft`}
-          />
-          <VictoryLabel
-            x={0}
-            y={62}
-            text={`${Math.round(yDomain[0])} ft`}
-          />
-          <VictoryLine
-            style={{
-              data: { stroke: "rgb(222, 73, 69)", strokeWidth: 2 }
-            }}
-            interpolation={"natural"}
-            data={data}
-            x={"distance"}
-            y={"elevation"}
-            animate={{
-              duration: 1000,
-              onLoad: { duration: 500 }
-            }}
-            domainPadding={{x: 10, y: 2}}
-            padding={{top: 0, bottom: 0, left: 35, right: 0}}
-            width={this.state.width}
-            height={70}
-          />
-        </Svg>
+        <VictoryLine
+          style={{
+            data: { stroke: "rgb(222, 73, 69)", strokeWidth: 2 }
+          }}
+          interpolation={"natural"}
+          data={data}
+          x={"distance"}
+          y={"elevation"}
+          animate={{
+            duration: 1000,
+            onLoad: { duration: 500 }
+          }}
+          domainPadding={{x: 10, y: 2}}
+          padding={{top: 0, bottom: 0, left: 40, right: 0}}
+          width={width}
+          height={70}
+        />
+        <Text style={styles.elevationLabelTop}>{Math.round(yDomain[1])} ft</Text>
+        <Text style={styles.elevationLabelBottom}>{Math.round(yDomain[0])} ft</Text>
       </View>
     )
   }
@@ -107,8 +92,26 @@ const styles = StyleSheet.create({
   elevation: {
     position: 'absolute',
     top: 33,
-    left: 5,
+    left: 0,
     right: 0
+  },
+
+  elevationLabelTop: {
+    position: 'absolute',
+    top: 0,
+    left: 3,
+    fontSize: 10,
+    textAlign: 'right',
+    width: 30
+  },
+
+  elevationLabelBottom: {
+    position: 'absolute',
+    top: 60,
+    left: 3,
+    fontSize: 10,
+    textAlign: 'right',
+    width: 30
   }
 })
 
