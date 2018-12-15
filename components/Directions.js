@@ -90,7 +90,7 @@ class Directions extends Component<Props> {
           >
             <View style={styles.button}>
               <Entypo name="map" size={20} style={styles.buttonIcon} />
-              <Text style={styles.buttonText}>View Directions</Text>
+              <Text style={styles.buttonText}>View Map</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -104,7 +104,7 @@ const styles = StyleSheet.create(Object.assign({}, globalStyles, {
     paddingTop: 40,
     paddingRight: 15,
     paddingLeft: 15,
-    paddingBottom: 15,
+    paddingBottom: 25,
     flex: 1,
   },
 
