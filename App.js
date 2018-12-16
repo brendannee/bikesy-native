@@ -140,7 +140,8 @@ export default class App extends Component<Props, State> {
 
   setStartLocation(coordinate) {
     this.setState({
-      startCoords: coordinate
+      startCoords: coordinate,
+      startAddress: undefined
     }, () => {
       if (this.state.endCoords) {
         this.updateRoute()
@@ -158,7 +159,8 @@ export default class App extends Component<Props, State> {
 
   setEndLocation(coordinate) {
     this.setState({
-      endCoords: coordinate
+      endCoords: coordinate,
+      endAddress: undefined
     },
     this.updateRoute)
 

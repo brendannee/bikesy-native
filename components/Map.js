@@ -58,10 +58,11 @@ class Map extends Component<Props, State> {
   }
 
   setMarker(coordinate) {
-    if (!this.props.startCoords) {
-      this.props.setStartLocation(coordinate)
-    } else if (!this.props.endCoords) {
-      this.props.setEndLocation(coordinate)
+    const { setStartLocation, setEndLocation, startCoords, endCoords } = this.props
+    if (!startCoords) {
+      setStartLocation(coordinate)
+    } else if (!endCoords) {
+      setEndLocation(coordinate)
     }
   }
 
@@ -74,12 +75,15 @@ class Map extends Component<Props, State> {
     return (
       <MapView.Marker
         coordinate={startCoords}
-        title="Start"
-        description={formatters.formatAddressLines(startAddress)}
         pinColor="#126c3f"
         draggable
         onDragEnd={e => setStartLocation(e.nativeEvent.coordinate)}
-      />
+      >
+        <MapView.Callout style={styles.callout}>
+          <Text style={styles.markerTitle}>Start</Text>
+          <Text>{formatters.formatAddressLines(startAddress)}</Text>
+        </MapView.Callout>
+      </MapView.Marker>
     )
   }
 
@@ -92,12 +96,15 @@ class Map extends Component<Props, State> {
     return (
       <MapView.Marker
         coordinate={endCoords}
-        title="End"
-        description={formatters.formatAddressLines(endAddress)}
         pinColor="#cf3043"
         draggable
         onDragEnd={e => setEndLocation(e.nativeEvent.coordinate)}
-      />
+      >
+        <MapView.Callout style={styles.callout}>
+          <Text style={styles.markerTitle}>End</Text>
+          <Text>{formatters.formatAddressLines(endAddress)}</Text>
+        </MapView.Callout>
+      </MapView.Marker>
     )
   }
 
@@ -225,6 +232,11 @@ class Map extends Component<Props, State> {
 const styles = StyleSheet.create(Object.assign({}, globalStyles, {
   map: {
     flex: 1
+  },
+
+  callout: {
+    width: 120,
+    padding: 5
   },
 
   clearButton: {
