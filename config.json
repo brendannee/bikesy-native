@@ -1,6 +1,6 @@
 {
   "googleMapsApiKey": "AIzaSyCdlv6F8kjbh2R6Rd-ULbhmfgUlFHzfDPk",
-  "mapboxAccessToken": "pk.eyJ1IjoiYmlrZXN5IiwiYSI6ImNqNWMyZ2ZpdjA1eHYycW5xdXAzMXQ3NmwifQ.P8mEApvDyQ3Z_MhtI2adVw",
+  "mapboxAccessToken": "pk.eyJ1IjoiYmlrZXN5IiwiYSI6ImNpb2Q5bGxidDAwMDF1bmt4ajcwNWNvMDkifQ.tjhechlMQUuWTlK5KgbafA",
   "mapboxStyleUrl": "mapbox://styles/bikesy/cisrx1j8h00022wqa7n21sddv",
   "bikeMapperApiUrl": "https://bikesy.com/api.php",
   "initialCenterLat": 37.7749,

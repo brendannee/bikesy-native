@@ -29,3 +29,10 @@ exports.getRegion = polyline => {
 exports.getDistanceMi = polyline => {
   return turfLength.default(polylineToGeoJSON(polyline), {units: 'miles'})
 }
+
+exports.regionContainsPoint = (region, point) => {
+  return point.latitude > region.latitude - region.latitudeDelta
+    && point.latitude < region.latitude + region.latitudeDelta
+    && point.longitude > region.longitude - region.longitudeDelta
+    && point.longitude < region.longitude + region.longitudeDelta
+}

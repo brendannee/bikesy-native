@@ -37,7 +37,6 @@ type State = {
 export default class App extends Component<Props, State> {
   constructor(props: Props) {
     super(props)
-
     this.state = {
       scenario: '1',
       directionsVisible: false
@@ -50,9 +49,9 @@ export default class App extends Component<Props, State> {
       'Welcome to Bikesy',
       'We\'ll find you the best bike route. Where do you want to start?',
       [
-        {text: 'Use My Current Location', onPress: this.setStartLocationFromUserLocation},
+        {text: 'Use My Current Location', onPress: () => this.setStartLocationFromUserLocation()},
         {text: 'Choose From Map'},
-        {text: 'Enter an Address', onPress: this.setStartLocationFromTextInput},
+        {text: 'Enter an Address', onPress: () => this.setStartLocationFromTextInput()},
       ],
       { cancelable: true }
     )
@@ -94,7 +93,20 @@ export default class App extends Component<Props, State> {
             startCoords: coordinate
           })
         })
-        .catch(Errors.handleError)
+        .catch(error => {
+          if (error.message === 'No matching features found') {
+            return Alert.alert(
+              'Unable to find address',
+              'Try another address, or place a pin directly on the map.',
+              [
+                {text: 'OK', onPress: () => this.setStartLocationFromTextInput()},
+              ],
+              { cancelable: true }
+            )
+          }
+
+          Errors.handleError(error);
+        })
       }
     )
   }
@@ -107,6 +119,7 @@ export default class App extends Component<Props, State> {
         this.updateRoute()
       }
     })
+
     api.reverseGeocode(coordinate)
     .then(startAddress => {
       this.setState({startAddress})
@@ -146,26 +159,36 @@ export default class App extends Component<Props, State> {
 
   render() {
     StatusBar.setHidden(true)
+    const {
+      startCoords,
+      endCoords,
+      startAddress,
+      endAddress,
+      path,
+      elevationProfile,
+      directions,
+      directionsVisible
+    } = this.state
     return (
       <View style={styles.container}>
         <Map
-          setStartLocation={this.setStartLocation}
-          setEndLocation={this.setEndLocation}
-          startCoords={this.state.startCoords}
-          endCoords={this.state.endCoords}
-          startAddress={this.state.startAddress}
-          endAddress={this.state.endAddress}
-          path={this.state.path}
-          clearRoute={this.clearRoute}
+          setStartLocation={coordinate => this.setStartLocation(coordinate)}
+          setEndLocation={coordinate => this.setEndLocation(coordinate)}
+          startCoords={startCoords}
+          endCoords={endCoords}
+          startAddress={startAddress}
+          endAddress={endAddress}
+          path={path}
+          clearRoute={() => this.clearRoute()}
           showDirections={() => {this.setState({directionsVisible: true})}}
-          elevationProfile={this.state.elevationProfile}
+          elevationProfile={elevationProfile}
         />
         <Directions
-          path={this.state.path}
-          elevationProfile={this.state.elevationProfile}
-          directions={this.state.directions}
-          endAddress={this.state.endAddress}
-          modalVisible={this.state.directionsVisible}
+          path={path}
+          elevationProfile={elevationProfile}
+          directions={directions}
+          endAddress={endAddress}
+          modalVisible={directionsVisible}
           hideModal={() => this.setState({directionsVisible: false})}
         />
       </View>

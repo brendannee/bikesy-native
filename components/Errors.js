@@ -10,7 +10,7 @@ exports.handleFetchError = (err) => {
     'Error Fetching Route',
     'It looks like Bikesy\'s route server isn\'t working right now. Try again later.',
     [
-      {text: 'OK', onPress: () => console.log('OK Pressed')},
+      {text: 'OK'},
     ],
     { cancelable: false }
   )

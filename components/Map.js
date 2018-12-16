@@ -8,7 +8,7 @@ import {
   Image,
   TouchableOpacity
 } from 'react-native'
-import { MapView, Marker } from 'expo'
+import { MapView } from 'expo'
 import {MaterialIcons, Entypo} from '@expo/vector-icons'
 import Summary from './Summary'
 
@@ -27,7 +27,9 @@ type Props = {
   startAddress: string,
   endAddress: string,
   path: Array<[number, number]>,
-  elevationProfile: mixed
+  elevationProfile: Array<[number, number]>,
+  showDirections: () => mixed,
+  clearRoute: () => mixed
 }
 
 type State = {
@@ -55,64 +57,68 @@ class Map extends Component<Props, State> {
     }
   }
 
-  onPress(e) {
+  setMarker(coordinate) {
     if (!this.props.startCoords) {
-      this.props.setStartLocation(e.nativeEvent.coordinate)
+      this.props.setStartLocation(coordinate)
     } else if (!this.props.endCoords) {
-      this.props.setEndLocation(e.nativeEvent.coordinate)
+      this.props.setEndLocation(coordinate)
     }
-  }
-
-  startMarkerDragEnd(e) {
-    this.props.setStartLocation(e.nativeEvent.coordinate)
-  }
-
-  endMarkerDragEnd(e) {
-    this.props.setEndLocation(e.nativeEvent.coordinate)
   }
 
   getStartMarker() {
-    if (this.props.startCoords) {
-      return (<Marker
-        coordinate={this.props.startCoords}
+    const { setStartLocation, startCoords, startAddress } = this.props
+    if (!startCoords) {
+      return null
+    }
+
+    return (
+      <MapView.Marker
+        coordinate={startCoords}
         title="Start"
-        description={formatters.formatAddressLines(this.props.startAddress)}
+        description={formatters.formatAddressLines(startAddress)}
         pinColor="#126c3f"
         draggable
-        onDragEnd={this.startMarkerDragEnd}
-      />)
-    }
+        onDragEnd={e => setStartLocation(e.nativeEvent.coordinate)}
+      />
+    )
   }
 
   getEndMarker() {
-    if (this.props.endCoords) {
-      return (
-        <Marker
-          coordinate={this.props.endCoords}
-          title="End"
-          description={formatters.formatAddressLines(this.props.endAddress)}
-          pinColor="#cf3043"
-          draggable
-          onDragEnd={this.endMarkerDragEnd}
-        />
-      )
+    const { setEndLocation, endCoords, endAddress } = this.props
+    if (!endCoords) {
+      return null
     }
+
+    return (
+      <MapView.Marker
+        coordinate={endCoords}
+        title="End"
+        description={formatters.formatAddressLines(endAddress)}
+        pinColor="#cf3043"
+        draggable
+        onDragEnd={e => setEndLocation(e.nativeEvent.coordinate)}
+      />
+    )
   }
 
   getRouteLine() {
-    if (this.props.path) {
-      const coordinates = this.props.path.map(coord => ({
-        latitude: coord[0],
-        longitude: coord[1]
-      }))
-      return (
-        <MapView.Polyline
-      		coordinates={coordinates}
-      		strokeColor="#ff6712"
-      		strokeWidth={3}
-      	/>
-      )
+    const { path } = this.props
+    if (!path) {
+      return null
     }
+
+    const coordinates = path.map(coord => ({
+      latitude: coord[0],
+      longitude: coord[1]
+    }))
+
+    return (
+      <MapView.Polyline
+    		coordinates={coordinates}
+    		strokeColor="#ff6712"
+    		strokeWidth={3}
+    	/>
+    )
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -126,27 +132,53 @@ class Map extends Component<Props, State> {
     }
   }
 
-  _renderClearButton() {
-    if (this.props.startCoords) {
-      return (
-        <TouchableOpacity
-         onPress={this.props.clearRoute}
-         style={styles.clearButton}
-        >
-          <View style={styles.button}>
-            <Entypo name="trash" size={20} style={styles.buttonIcon} />
-            <Text style={styles.buttonText}>Clear</Text>
-          </View>
-        </TouchableOpacity>
-      )
+  async componentDidUpdate(prevProps) {
+    const { region } = this.state
+    const { startCoords } = this.props
+    if (startCoords  && !_.isEqual(prevProps.startCoords, startCoords)) {
+      if (!mapUtils.regionContainsPoint(region, startCoords)) {
+
+        this.setState({
+          region: {
+            latitude: startCoords.latitude,
+            longitude: startCoords.longitude,
+            latitudeDelta: region.latitudeDelta,
+            longitudeDelta: region.longitudeDelta
+          }
+        })
+      }
     }
   }
 
+  _renderClearButton() {
+    const { startCoords, clearRoute } = this.props
+    if (!startCoords) {
+      return null
+    }
+
+    return (
+      <TouchableOpacity
+       onPress={() => clearRoute()}
+       style={styles.clearButton}
+      >
+        <View style={styles.button}>
+          <Entypo name="trash" size={20} style={styles.buttonIcon} />
+          <Text style={styles.buttonText}>Clear</Text>
+        </View>
+      </TouchableOpacity>
+    )
+  }
+
   _renderDirectionsButton() {
-    if (this.props.path) {
-      return (
+    const { path, showDirections } = this.props
+    if (!path) {
+      return null
+    }
+
+    return (
+      <View style={styles.buttonContainer}>
         <TouchableOpacity
-         onPress={this.props.showDirections}
+         onPress={showDirections}
          style={styles.directionsButton}
         >
           <View style={styles.button}>
@@ -154,8 +186,8 @@ class Map extends Component<Props, State> {
             <Text style={styles.buttonText}>View Directions</Text>
           </View>
         </TouchableOpacity>
-      )
-    }
+      </View>
+    )
   }
 
   render() {
@@ -165,7 +197,7 @@ class Map extends Component<Props, State> {
         <MapView
           style={styles.map}
           region={this.state.region}
-          onPress={this.onPress}
+          onPress={e => this.setMarker(e.nativeEvent.coordinate)}
           mapType="mutedStandard"
           showsUserLocation={true}
           mapPadding = {{
@@ -201,6 +233,12 @@ const styles = StyleSheet.create(Object.assign({}, globalStyles, {
     right: 15,
     zIndex: 1,
   },
+
+  buttonContainer: {
+    paddingRight: 15,
+    paddingLeft: 15,
+    paddingTop: 5
+  }
 }))
 
 module.exports = Map
