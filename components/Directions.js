@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Text,
   View,
+  SafeAreaView,
   ScrollView,
   Image,
   TouchableOpacity,
@@ -75,27 +76,29 @@ class Directions extends Component<Props> {
         visible={this.props.modalVisible}
         onRequestClose={() => alert('Modal has been closed.')}
       >
-        <View style={styles.directions}>
-          <Image source={require('../assets/images/bikesy-logo.png')} style={styles.logo} />
-          <ScrollView style={styles.directionsContent}>
-            <Text style={styles.directionTitle}>Directions to {this.props.endAddress}</Text>
-            <View style={styles.summary}>
-              <Text style={styles.summaryText}>{totalDistance} miles, {totalTime}</Text>
-              <Text style={styles.summaryText}>{totalElevGain} of total climbing</Text>
-            </View>
-            {this.formatDirections()}
-            <Text style={styles.disclaimer}>We offer no guarantee regarding roadway conditions or safety of the proposed routes. Use your best judgment when choosing a route. Obey all vehicle code provisions.</Text>
-          </ScrollView>
-          <TouchableOpacity
-           onPress={this.props.hideModal}
-           style={styles.directionsButton}
-          >
-            <View style={styles.button}>
-              <Entypo name="map" size={20} style={styles.buttonIcon} />
-              <Text style={styles.buttonText}>View Map</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+        <SafeAreaView style={{flex: 1}}>
+          <View style={styles.directions}>
+            <Image source={require('../assets/images/bikesy-logo.png')} style={styles.directionsLogo} />
+            <ScrollView>
+              <Text style={styles.directionTitle}>Directions to {this.props.endAddress}</Text>
+              <View style={styles.summary}>
+                <Text style={styles.summaryText}>{totalDistance} miles, {totalTime}</Text>
+                <Text style={styles.summaryText}>{totalElevGain} of total climbing</Text>
+              </View>
+              {this.formatDirections()}
+              <Text style={styles.disclaimer}>We offer no guarantee regarding roadway conditions or safety of the proposed routes. Use your best judgment when choosing a route. Obey all vehicle code provisions.</Text>
+            </ScrollView>
+            <TouchableOpacity
+             onPress={this.props.hideModal}
+             style={styles.directionsButton}
+            >
+              <View style={styles.button}>
+                <Entypo name="map" size={20} style={styles.buttonIcon} />
+                <Text style={styles.buttonText}>View Map</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
       </Modal>
     )
   }
@@ -103,15 +106,15 @@ class Directions extends Component<Props> {
 
 const styles = StyleSheet.create(Object.assign({}, globalStyles, {
   directions: {
-    paddingTop: 40,
+    paddingTop: 10,
     paddingRight: 15,
     paddingLeft: 15,
     paddingBottom: 25,
     flex: 1,
   },
 
-  directionsContent: {
-    marginTop: 60
+  directionsLogo: {
+    marginBottom: 10
   },
 
   directionTitle: {
