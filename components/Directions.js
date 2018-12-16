@@ -12,6 +12,8 @@ import {
 } from 'react-native'
 import {Entypo} from '@expo/vector-icons'
 
+import _ from 'lodash'
+
 const formatters = require('../services/formatters')
 const mapUtils = require('../services/map-utils')
 
@@ -40,7 +42,7 @@ class Directions extends Component<Props> {
       if (direction[1] !== 'nameless') {
         memo.push(<View style={styles.directionStep} key={idx}>
           <Text style={styles.directionStepText}>
-            <Text style={styles.directionStepComponent}>{direction[0]}</Text> on <Text style={styles.directionStepComponent}>{direction[1]}</Text>
+            <Text style={styles.directionStepComponent}>{_.upperFirst(direction[0])}</Text> on <Text style={styles.directionStepComponent}>{direction[1]}</Text>
           </Text>
         </View>)
       }

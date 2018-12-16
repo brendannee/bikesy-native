@@ -49,9 +49,22 @@ export default class App extends Component<Props, State> {
       'Welcome to Bikesy',
       'We\'ll find you the best bike route. Where do you want to start?',
       [
-        {text: 'Use My Current Location', onPress: () => this.setStartLocationFromUserLocation()},
+        {text: 'Use My Current Location', onPress: () => this.setLocationFromUserLocation('start')},
         {text: 'Choose From Map'},
-        {text: 'Enter an Address', onPress: () => this.setStartLocationFromTextInput()},
+        {text: 'Enter an Address', onPress: () => this.setLocationFromTextInput('start')},
+      ],
+      { cancelable: true }
+    )
+  }
+
+  showEndLocationAlert() {
+    Alert.alert(
+      'Where would you like to go?',
+      'Select your destination.',
+      [
+        {text: 'Use My Current Location', onPress: () => this.setLocationFromUserLocation('end')},
+        {text: 'Choose From Map'},
+        {text: 'Enter an Address', onPress: () => this.setLocationFromTextInput('end')},
       ],
       { cancelable: true }
     )
@@ -75,23 +88,37 @@ export default class App extends Component<Props, State> {
     .catch(Errors.handleFetchError)
   }
 
-  setStartLocationFromUserLocation() {
+  setLocationFromUserLocation(locationType: string) {
     navigator.geolocation.getCurrentPosition(result => {
-      this.setStartLocation(result.coords)
+      if (locationType === 'start') {
+        this.setStartLocation(result.coords)
+      } else if (locationType === 'end') {
+        this.setEndLocation(result.coords)
+      }
     }, Errors.handleGeoLocationError)
   }
 
-  setStartLocationFromTextInput() {
+  setLocationFromTextInput(locationType: string) {
+    const locationTypeText = locationType === 'start' ? 'start' : 'destination'
     AlertIOS.prompt(
-      'Enter a start address',
+      `Enter a ${locationTypeText} address`,
       null,
-      startAddress => {
-        api.geocode(startAddress)
+      address => {
+        api.geocode(address)
         .then(coordinate => {
-          this.setState({
-            startAddress,
-            startCoords: coordinate
-          })
+          if (locationType === 'start') {
+            this.setState({
+              startAddress: address,
+              startCoords: coordinate
+            })
+            this.showEndLocationAlert()
+          } else if (locationType === 'end') {
+            this.setState({
+              endAddress: address,
+              endCoords: coordinate
+            })
+            this.updateRoute()
+          }
         })
         .catch(error => {
           if (error.message === 'No matching features found') {
@@ -99,7 +126,7 @@ export default class App extends Component<Props, State> {
               'Unable to find address',
               'Try another address, or place a pin directly on the map.',
               [
-                {text: 'OK', onPress: () => this.setStartLocationFromTextInput()},
+                {text: 'OK', onPress: () => this.setLocationFromTextInput(locationType)},
               ],
               { cancelable: true }
             )
@@ -117,6 +144,8 @@ export default class App extends Component<Props, State> {
     }, () => {
       if (this.state.endCoords) {
         this.updateRoute()
+      } else {
+        this.showEndLocationAlert()
       }
     })
 
