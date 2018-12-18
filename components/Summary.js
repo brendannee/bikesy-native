@@ -63,14 +63,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#273443',
     paddingBottom: 3,
-    paddingTop: 2
+    paddingTop: 4,
+    fontWeight: 'bold'
   },
 
   elevationText: {
     fontSize: 16,
     color: '#273443',
     paddingBottom: 10,
-    paddingTop: 3
+    paddingTop: 4,
+    fontWeight: 'bold'
   }
 })
 
