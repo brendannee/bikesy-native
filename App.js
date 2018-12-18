@@ -188,10 +188,20 @@ export default class App extends Component<Props, State> {
     .then(startAddress => {
       this.setState({startAddress})
     })
-    .catch(Errors.handleError)
+    .catch(error => {
+      if (error.message === 'No matching features found') {
+        return
+      }
+
+      Errors.handleError(error);
+    })
   }
 
   setEndLocation(coordinate) {
+    if (!mapUtils.isWithinMapBoundaries(coordinate)) {
+      return Errors.handleOutOfBoundsError()
+    }
+
     this.setState({
       endCoords: coordinate,
       endAddress: undefined
@@ -202,7 +212,13 @@ export default class App extends Component<Props, State> {
     .then(endAddress => {
       this.setState({endAddress})
     })
-    .catch(Errors.handleError)
+    .catch(error => {
+      if (error.message === 'No matching features found') {
+        return
+      }
+
+      Errors.handleError(error);
+    })
   }
 
   clearRoute() {
@@ -224,6 +240,16 @@ export default class App extends Component<Props, State> {
 
   render() {
     StatusBar.setHidden(true)
+
+    if (!this.state.appIsReady) {
+      return (
+        <AppLoading
+          startAsync={this.loadAssets}
+          onFinish={() => this.setState({ appIsReady: true })}
+        />
+      )
+    }
+
     const {
       startCoords,
       endCoords,

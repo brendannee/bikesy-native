@@ -4,8 +4,7 @@ import {
   Alert
 } from 'react-native'
 
-exports.handleFetchError = (err) => {
-  console.error(err)
+exports.handleFetchError = (error) => {
   Alert.alert(
     'Error Fetching Route',
     'It looks like Bikesy\'s route server isn\'t working right now. Try again later.',
@@ -16,8 +15,8 @@ exports.handleFetchError = (err) => {
   )
 }
 
-exports.handleError = (err) => {
-  console.error(err)
+exports.handleError = (error) => {
+  console.error(error)
   Alert.alert(
     'Unknown Error',
     'Something unexpected happened. Try again later.',
@@ -28,8 +27,7 @@ exports.handleError = (err) => {
   )
 }
 
-exports.handleGeoLocationError = (err) => {
-  console.error(err)
+exports.handleGeoLocationError = (error) => {
   Alert.alert(
     'Unable to geolocate you',
     'Choose a start location by clicking on the map',
