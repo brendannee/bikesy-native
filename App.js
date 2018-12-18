@@ -13,6 +13,7 @@ import {
 import Directions from './components/Directions'
 import Map from './components/Map'
 import Errors from './components/Errors'
+import { AppLoading, Asset } from 'expo'
 
 import polyline from '@mapbox/polyline'
 
@@ -34,6 +35,16 @@ type State = {
   path?: string
 }
 
+function cacheImages(images) {
+  return images.map(image => {
+    if (typeof image === 'string') {
+      return Image.prefetch(image);
+    } else {
+      return Asset.fromModule(image).downloadAsync();
+    }
+  });
+}
+
 export default class App extends Component<Props, State> {
   constructor(props: Props) {
     super(props)
@@ -43,6 +54,13 @@ export default class App extends Component<Props, State> {
     }
   }
 
+  async loadAssets() {
+    const imageAssets = cacheImages([
+      require('./assets/images/bikesy-logo.png'),
+    ]);
+
+    await Promise.all(imageAssets);
+  }
 
   showWelcomeAlert() {
     Alert.alert(
