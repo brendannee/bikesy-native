@@ -10,6 +10,7 @@ import {
   Text,
   View
 } from 'react-native'
+import About from './components/About'
 import Directions from './components/Directions'
 import Map from './components/Map'
 import Errors from './components/Errors'
@@ -26,6 +27,7 @@ type Props = {}
 type State = {
   scenario: string,
   directionsVisible: boolean,
+  aboutVisible: boolean,
   startCoords?: mixed,
   startAddress?: string,
   endAddress?: string,
@@ -49,8 +51,10 @@ export default class App extends Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
+      appIsReady: false,
       scenario: '1',
-      directionsVisible: false
+      directionsVisible: false,
+      aboutVisible: false
     }
   }
 
@@ -216,7 +220,8 @@ export default class App extends Component<Props, State> {
       path,
       elevationProfile,
       directions,
-      directionsVisible
+      directionsVisible,
+      aboutVisible
     } = this.state
     return (
       <View style={styles.container}>
@@ -230,6 +235,7 @@ export default class App extends Component<Props, State> {
           path={path}
           clearRoute={() => this.clearRoute()}
           showDirections={() => {this.setState({directionsVisible: true})}}
+          showAbout={() => {this.setState({aboutVisible: true})}}
           elevationProfile={elevationProfile}
         />
         <Directions
@@ -237,8 +243,14 @@ export default class App extends Component<Props, State> {
           elevationProfile={elevationProfile}
           directions={directions}
           endAddress={endAddress}
+          showAbout={() => {this.setState({aboutVisible: true, directionsVisible: false})}}
           modalVisible={directionsVisible}
           hideModal={() => this.setState({directionsVisible: false})}
+        />
+        <About
+          path={path}
+          modalVisible={aboutVisible}
+          hideModal={() => this.setState({aboutVisible: false})}
         />
       </View>
     )

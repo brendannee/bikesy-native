@@ -28,6 +28,7 @@ type Props = {
   endAddress: string,
   path: Array<[number, number]>,
   elevationProfile: Array<[number, number]>,
+  showAbout: () => mixed,
   showDirections: () => mixed,
   clearRoute: () => mixed
 }
@@ -186,7 +187,6 @@ class Map extends Component<Props, State> {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
          onPress={showDirections}
-         style={styles.directionsButton}
         >
           <View style={styles.button}>
             <MaterialIcons name="directions" size={20} style={styles.buttonIcon} />
@@ -200,7 +200,12 @@ class Map extends Component<Props, State> {
   render() {
     return (
       <View style={styles.map}>
-        <Image source={require('../assets/images/bikesy-logo.png')} style={styles.logo} />
+        <TouchableOpacity
+         onPress={this.props.showAbout}
+         style={styles.logo}
+        >
+          <Image source={require('../assets/images/bikesy-logo.png')} />
+        </TouchableOpacity>
         <MapView
           style={styles.map}
           region={this.state.region}

@@ -26,6 +26,7 @@ type Props = {
   endAddress: string,
   elevationProfile: mixed,
   modalVisible: boolean,
+  showAbout: () => mixed,
   hideModal: () => mixed
 }
 
@@ -74,11 +75,16 @@ class Directions extends Component<Props> {
         animationType="slide"
         transparent={false}
         visible={this.props.modalVisible}
-        onRequestClose={() => alert('Modal has been closed.')}
+        onRequestClose={this.props.hideModal}
       >
         <SafeAreaView style={{flex: 1}}>
-          <View style={styles.directions}>
-            <Image source={require('../assets/images/bikesy-logo.png')} style={styles.directionsLogo} />
+          <View style={styles.modalContent}>
+            <TouchableOpacity
+             onPress={this.props.showAbout}
+             style={styles.directionsLogo}
+            >
+              <Image source={require('../assets/images/bikesy-logo.png')} />
+            </TouchableOpacity>
             <ScrollView>
               <Text style={styles.directionTitle}>Directions to {this.props.endAddress}</Text>
               <View style={styles.summary}>
@@ -90,7 +96,6 @@ class Directions extends Component<Props> {
             </ScrollView>
             <TouchableOpacity
              onPress={this.props.hideModal}
-             style={styles.directionsButton}
             >
               <View style={styles.button}>
                 <Entypo name="map" size={20} style={styles.buttonIcon} />
@@ -105,14 +110,6 @@ class Directions extends Component<Props> {
 }
 
 const styles = StyleSheet.create(Object.assign({}, globalStyles, {
-  directions: {
-    paddingTop: 10,
-    paddingRight: 15,
-    paddingLeft: 15,
-    paddingBottom: 25,
-    flex: 1,
-  },
-
   directionsLogo: {
     marginBottom: 10
   },

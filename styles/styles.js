@@ -22,10 +22,37 @@ export default {
     marginRight: 5
   },
 
+  buttonIconSingle: {
+    color: '#ffffff'
+  },
+
   logo: {
     position: 'absolute',
     top: 35,
     left: 15,
     zIndex: 1
   },
+
+  markerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold'
+  },
+
+  modalContent: {
+    paddingTop: 10,
+    paddingRight: 15,
+    paddingLeft: 15,
+    paddingBottom: 25,
+    flex: 1,
+  },
+
+  sectionTitle: {
+    paddingTop: 10,
+    fontWeight: 'bold',
+    fontSize: 16
+  },
+
+  paragraph: {
+    lineHeight: 20
+  }
 }
