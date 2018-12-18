@@ -18,6 +18,7 @@ import { AppLoading, Asset } from 'expo'
 
 import polyline from '@mapbox/polyline'
 
+const mapUtils = require('./services/map-utils')
 const api = require('./services/api')
 
 import globalStyles from './styles/styles'
@@ -94,6 +95,9 @@ export default class App extends Component<Props, State> {
 
   updateRoute() {
     const { startCoords, endCoords, scenario } = this.state
+
+    this.setState({ path: undefined })
+
     api.getRoute(startCoords, endCoords, scenario)
     .then(results => {
       if (!this.state.startCoords) {
@@ -128,6 +132,10 @@ export default class App extends Component<Props, State> {
       address => {
         api.geocode(address)
         .then(coordinate => {
+          if (!mapUtils.isWithinMapBoundaries(coordinate)) {
+            return Errors.handleOutOfBoundsError()
+          }
+
           if (locationType === 'start') {
             this.setState({
               startAddress: address,
@@ -161,6 +169,10 @@ export default class App extends Component<Props, State> {
   }
 
   setStartLocation(coordinate) {
+    if (!mapUtils.isWithinMapBoundaries(coordinate)) {
+      return Errors.handleOutOfBoundsError()
+    }
+
     this.setState({
       startCoords: coordinate,
       startAddress: undefined

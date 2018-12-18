@@ -39,3 +39,14 @@ exports.handleGeoLocationError = (err) => {
     { cancelable: false }
   )
 }
+
+exports.handleOutOfBoundsError = (error) => {
+  Alert.alert(
+    'Bikesy only supports routes in the San Francisco Bay Area',
+    'Try a route closer to San Francisco.',
+    [
+      {text: 'OK'},
+    ],
+    { cancelable: false }
+  )
+}

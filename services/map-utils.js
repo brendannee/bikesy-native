@@ -1,5 +1,7 @@
 /* @flow */
 
+const config = require('../config.json')
+
 const turfBBox = require('@turf/bbox')
 const turfLength = require('@turf/length')
 
@@ -35,4 +37,11 @@ exports.regionContainsPoint = (region, point) => {
     && point.latitude < region.latitude + region.latitudeDelta
     && point.longitude > region.longitude - region.longitudeDelta
     && point.longitude < region.longitude + region.longitudeDelta
+}
+
+exports.isWithinMapBoundaries = point => {
+  return point.latitude < config.boundsTop
+    && point.latitude > config.boundsBottom
+    && point.longitude > config.boundsLeft
+    && point.longitude < config.boundsRight
 }
