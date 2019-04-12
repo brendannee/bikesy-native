@@ -5,7 +5,7 @@
     "slug": "bikesy",
     "version": "0.1.0",
     "orientation": "portrait",
-    "icon": "./assets/app-icon.png",
+    "icon": "./app/assets/app-icon.png",
     "ios": {
       "config": {
         "googleMapsApiKey": "AIzaSyCdlv6F8kjbh2R6Rd-ULbhmfgUlFHzfDPk"
@@ -13,7 +13,7 @@
     },
     "sdkVersion": "32.0.0",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./app/assets/splash.png",
       "backgroundColor": "#333333",
       "resizeMode": "contain"
     }

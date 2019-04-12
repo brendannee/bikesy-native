@@ -1,44 +1,46 @@
-/* @flow */
-
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
   View,
-  SafeAreaView
- } from 'react-native'
+ } from 'react-native';
 
-import Elevation from './Elevation'
+import Elevation from './Elevation';
 
-const formatters = require('../services/formatters')
-const mapUtils = require('../services/map-utils')
+import {
+  formatDistance,
+  formatElevation,
+  formatTime,
+  getElevationGain,
+} from '../services/formatters';
+import { getDistanceMi } from '../services/map-utils';
 
 type Props = {
   path: Array<[number, number]>,
   elevationProfile: Array<[number, number]>
-}
+};
 
-class Summary extends Component<Props> {
+export default class Summary extends Component<Props> {
   render() {
     if (!this.props.path) {
-      return null
+      return null;
     }
 
-    const totalDistance = formatters.formatDistance(mapUtils.getDistanceMi(this.props.path))
-    const totalTime = formatters.formatTime(totalDistance)
-    const totalElevGain = formatters.formatElevation(formatters.getElevationGain(this.props.elevationProfile))
+    const totalDistance = formatDistance(getDistanceMi(this.props.path));
+    const totalTime = formatTime(totalDistance);
+    const totalElevGain = formatElevation(getElevationGain(this.props.elevationProfile));
 
     return (
       <View style={styles.resultSummary}>
         <View style={styles.overview}>
-          <Text style={styles.resultText}>{totalDistance} miles, {totalTime}</Text>
+          <Text style={styles.resultText}>
+            {totalDistance} miles, {totalTime}
+          </Text>
           <Text style={styles.elevationText}>{totalElevGain} of climbing</Text>
         </View>
-        <Elevation
-          elevationProfile={this.props.elevationProfile}
-        />
+        <Elevation elevationProfile={this.props.elevationProfile} />
       </View>
-    )
+    );
   }
 }
 
@@ -74,6 +76,4 @@ const styles = StyleSheet.create({
     paddingTop: 4,
     fontWeight: 'bold'
   }
-})
-
-module.exports = Summary
+});

@@ -1,11 +1,9 @@
-/* @flow */
+import _ from 'lodash';
+import React, { Component } from 'react';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { VictoryLine } from "victory-native";
 
-import React, { Component } from 'react'
-import _ from 'lodash'
-import { Dimensions, StyleSheet, View, Text } from 'react-native'
-import { VictoryLine } from "victory-native"
-
-const formatters = require('../services/formatters')
+import { metersToFeet, metersToMiles } from '../services/formatters';
 
 type Props = {
   elevationProfile: Array<[number, number]>
@@ -16,75 +14,75 @@ type State = {
   key: number
 }
 
-class Elevation extends Component<Props, State> {
+export default class Elevation extends Component<Props, State> {
   constructor(props: Props) {
-    super(props)
+    super(props);
 
     this.state = {
+      key: 1,
       width: 0,
-      key: 1
-    }
+    };
   }
 
   getYDomain(elevationProfile) {
     return elevationProfile.reduce((memo, item) => {
       return [Math.min(memo[0], item.elevation), Math.max(memo[1], item.elevation)]
-    }, [Infinity, -Infinity])
+    }, [Infinity, -Infinity]);
   }
 
   formatElevationProfile() {
-    return this.props.elevationProfile.map((item) => {
+    return this.props.elevationProfile.map(item => {
       return {
-        elevation: formatters.metersToFeet(item[1]),
-        distance: formatters.metersToMiles(item[0]),
-      }
-    })
+        distance: metersToMiles(item[0]),
+        elevation: metersToFeet(item[1]),
+      };
+    });
   }
 
   componentDidMount() {
-    const {width} = Dimensions.get('window')
+    const { width } = Dimensions.get('window');
     this.setState({
-      width
-    })
+      width,
+    });
 
     Dimensions.addEventListener('change', () => {
       // Key parameter forces SVG to redraw on size change
-      const {width} = Dimensions.get('window')
+      const { width } = Dimensions.get('window');
       this.setState({
+        key: this.state.key + 1,
         width,
-        key: this.state.key + 1
-      })
-    })
+      });
+    });
   }
 
   render() {
-    const data = this.formatElevationProfile()
-    const yDomain = this.getYDomain(data)
-    const {width, key} = this.state
+    const data = this.formatElevationProfile();
+    const yDomain = this.getYDomain(data);
+    const {width, key} = this.state;
 
     return (
       <View style={styles.elevation}>
         <VictoryLine
           style={{
-            data: { stroke: "rgb(222, 73, 69)", strokeWidth: 2 }
+            data: { stroke: 'rgb(222, 73, 69)', strokeWidth: 2 },
           }}
-          interpolation={"natural"}
+          interpolation="natural"
           data={data}
-          x={"distance"}
-          y={"elevation"}
+          x="distance"
+          y="elevation"
           animate={{
             duration: 1000,
-            onLoad: { duration: 500 }
+            onLoad: { duration: 500 },
           }}
-          domainPadding={{x: 10, y: 2}}
-          padding={{top: 0, bottom: 0, left: 40, right: 0}}
+          domainPadding={{ x: 10, y: 2 }}
+          padding={{ top: 0, bottom: 0, left: 40, right: 0 }}
           width={width}
           height={70}
         />
         <Text style={styles.elevationLabelTop}>{Math.round(yDomain[1])} ft</Text>
         <Text style={styles.elevationLabelBottom}>{Math.round(yDomain[0])} ft</Text>
       </View>
-    )
+    );
   }
 }
 
@@ -93,7 +91,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 33,
     left: 0,
-    right: 0
+    right: 0,
   },
 
   elevationLabelTop: {
@@ -113,6 +111,4 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     width: 30
   }
-})
-
-module.exports = Elevation
+});

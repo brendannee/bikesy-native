@@ -1,37 +1,35 @@
-/* @flow */
-
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import {
   View,
   StyleSheet,
   Text,
   Image,
   TouchableOpacity
-} from 'react-native'
-import { MapView } from 'expo'
-import {MaterialIcons, Entypo} from '@expo/vector-icons'
-import Summary from './Summary'
+} from 'react-native';
+import { MapView } from 'expo';
+import { MaterialIcons, Entypo } from '@expo/vector-icons';
+import Summary from './Summary';
 
-import _ from 'lodash'
-const formatters = require('../services/formatters')
-const mapUtils = require('../services/map-utils')
-const config = require('../config.json')
+import _ from 'lodash';
+import { formatAddressLines } from '../services/formatters';
+import { getRegion, regionContainsPoint } from '../services/map-utils';
+import config from '../../config.json';
 
-import globalStyles from '../styles/styles'
+import globalStyles from '../styles/styles';
 
 type Props = {
-  startCoords: mixed,
-  endCoords: mixed,
-  setStartLocation: (mixed) => mixed,
-  setEndLocation: (mixed) => mixed,
+  startCoords: any,
+  endCoords: any,
+  setStartLocation: (mixed) => any,
+  setEndLocation: (mixed) => mianyxed,
   startAddress: string,
   endAddress: string,
   path: Array<[number, number]>,
   elevationProfile: Array<[number, number]>,
-  showAbout: () => mixed,
-  showDirections: () => mixed,
-  clearRoute: () => mixed
-}
+  showAbout: () => any,
+  showDirections: () => any,
+  clearRoute: () => any,
+};
 
 type State = {
   region: {
@@ -43,34 +41,34 @@ type State = {
   zoom: number
 }
 
-class Map extends Component<Props, State> {
+export default class Map extends Component<Props, State> {
   constructor(props: Props) {
-    super(props)
+    super(props);
 
     this.state = {
       region: {
         latitude: config.initialCenterLat,
-        longitude: config.initialCenterLng,
         latitudeDelta: 0.0922,
+        longitude: config.initialCenterLng,
         longitudeDelta: 0.0421,
       },
       zoom: config.initialZoom,
-    }
+    };
   }
 
   setMarker(coordinate) {
-    const { setStartLocation, setEndLocation, startCoords, endCoords } = this.props
+    const { setStartLocation, setEndLocation, startCoords, endCoords } = this.props;
     if (!startCoords) {
-      setStartLocation(coordinate)
+      setStartLocation(coordinate);
     } else if (!endCoords) {
-      setEndLocation(coordinate)
+      setEndLocation(coordinate);
     }
   }
 
   getStartMarker() {
-    const { setStartLocation, startCoords, startAddress } = this.props
+    const { setStartLocation, startCoords, startAddress } = this.props;
     if (!startCoords) {
-      return null
+      return null;
     }
 
     return (
@@ -82,16 +80,16 @@ class Map extends Component<Props, State> {
       >
         <MapView.Callout style={styles.callout}>
           <Text style={styles.markerTitle}>Start</Text>
-          <Text>{formatters.formatAddressLines(startAddress)}</Text>
+          <Text>{formatAddressLines(startAddress)}</Text>
         </MapView.Callout>
       </MapView.Marker>
-    )
+    );
   }
 
   getEndMarker() {
-    const { setEndLocation, endCoords, endAddress } = this.props
+    const { setEndLocation, endCoords, endAddress } = this.props;
     if (!endCoords) {
-      return null
+      return null;
     }
 
     return (
@@ -103,107 +101,92 @@ class Map extends Component<Props, State> {
       >
         <MapView.Callout style={styles.callout}>
           <Text style={styles.markerTitle}>End</Text>
-          <Text>{formatters.formatAddressLines(endAddress)}</Text>
+          <Text>{formatAddressLines(endAddress)}</Text>
         </MapView.Callout>
       </MapView.Marker>
-    )
+    );
   }
 
   getRouteLine() {
-    const { path } = this.props
+    const { path } = this.props;
     if (!path) {
-      return null
+      return null;
     }
 
     const coordinates = path.map(coord => ({
       latitude: coord[0],
-      longitude: coord[1]
-    }))
+      longitude: coord[1],
+    }));
 
-    return (
-      <MapView.Polyline
-    		coordinates={coordinates}
-    		strokeColor="#ff6712"
-    		strokeWidth={3}
-    	/>
-    )
+    return <MapView.Polyline coordinates={coordinates} strokeColor="#ff6712" strokeWidth={3} />;
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
     if (nextProps.path && !_.isEqual(nextProps.path, prevState.path)) {
       return {
         path: nextProps.path,
-        region: mapUtils.getRegion(nextProps.path)
-      }
+        region: getRegion(nextProps.path)
+      };
     } else {
-      return null
+      return null;
     }
   }
 
   async componentDidUpdate(prevProps) {
-    const { region } = this.state
-    const { startCoords } = this.props
-    if (startCoords  && !_.isEqual(prevProps.startCoords, startCoords)) {
-      if (!mapUtils.regionContainsPoint(region, startCoords)) {
-
+    const { region } = this.state;
+    const { startCoords } = this.props;
+    if (startCoords && !_.isEqual(prevProps.startCoords, startCoords)) {
+      if (!regionContainsPoint(region, startCoords)) {
         this.setState({
           region: {
             latitude: startCoords.latitude,
-            longitude: startCoords.longitude,
             latitudeDelta: region.latitudeDelta,
-            longitudeDelta: region.longitudeDelta
-          }
-        })
+            longitude: startCoords.longitude,
+            longitudeDelta: region.longitudeDelta,
+          },
+        });
       }
     }
   }
 
   _renderClearButton() {
-    const { startCoords, clearRoute } = this.props
+    const { startCoords, clearRoute } = this.props;
     if (!startCoords) {
-      return null
+      return null;
     }
 
     return (
-      <TouchableOpacity
-       onPress={() => clearRoute()}
-       style={styles.clearButton}
-      >
+      <TouchableOpacity onPress={() => clearRoute()} style={styles.clearButton}>
         <View style={styles.button}>
           <Entypo name="trash" size={20} style={styles.buttonIcon} />
           <Text style={styles.buttonText}>Clear</Text>
         </View>
       </TouchableOpacity>
-    )
+    );
   }
 
   _renderDirectionsButton() {
     const { path, showDirections } = this.props
     if (!path) {
-      return null
+      return null;
     }
 
     return (
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-         onPress={showDirections}
-        >
+        <TouchableOpacity onPress={showDirections}>
           <View style={styles.button}>
             <MaterialIcons name="directions" size={20} style={styles.buttonIcon} />
             <Text style={styles.buttonText}>View Directions</Text>
           </View>
         </TouchableOpacity>
       </View>
-    )
+    );
   }
 
   render() {
     return (
       <View style={styles.map}>
-        <TouchableOpacity
-         onPress={this.props.showAbout}
-         style={styles.logo}
-        >
+        <TouchableOpacity onPress={this.props.showAbout} style={styles.logo}>
           <Image source={require('../assets/images/bikesy-logo.png')} />
         </TouchableOpacity>
         <MapView
@@ -212,7 +195,7 @@ class Map extends Component<Props, State> {
           onPress={e => this.setMarker(e.nativeEvent.coordinate)}
           mapType="mutedStandard"
           showsUserLocation={true}
-          mapPadding = {{
+          mapPadding={{
             top: 105,
             right: 15,
             bottom: 10,
@@ -225,10 +208,7 @@ class Map extends Component<Props, State> {
         </MapView>
         {this._renderClearButton()}
         {this._renderDirectionsButton()}
-        <Summary
-          path={this.props.path}
-          elevationProfile={this.props.elevationProfile}
-        />
+        <Summary path={this.props.path} elevationProfile={this.props.elevationProfile} />
       </View>
     )
   }
@@ -256,6 +236,4 @@ const styles = StyleSheet.create(Object.assign({}, globalStyles, {
     paddingLeft: 15,
     paddingTop: 5
   }
-}))
-
-module.exports = Map
+}));

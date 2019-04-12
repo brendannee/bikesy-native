@@ -1,6 +1,4 @@
-/* @flow */
-
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import {
   Alert,
   AlertIOS,
@@ -8,19 +6,24 @@ import {
   StyleSheet,
   Text,
   View
-} from 'react-native'
-import About from './components/About'
-import Directions from './components/Directions'
-import Map from './components/Map'
-import Errors from './components/Errors'
-import { AppLoading, Asset } from 'expo'
+} from 'react-native';
+import About from './components/About';
+import Directions from './components/Directions';
+import {
+  handleError,
+  handleFetchError,
+  handleGeoLocationError,
+  handleOutOfBoundsError,
+} from './components/Errors';
+import Map from './components/Map';
+import { AppLoading, Asset } from 'expo';
 
-import polyline from '@mapbox/polyline'
+import polyline from '@mapbox/polyline';
 
-const mapUtils = require('./services/map-utils')
-const api = require('./services/api')
+import { isWithinMapBoundaries } from './services/map-utils';
+import { geocode, getRoute, reverseGeocode } from './services/api';
 
-import globalStyles from './styles/styles'
+import globalStyles from './styles/styles';
 
 type Props = {}
 
@@ -49,19 +52,17 @@ function cacheImages(images) {
 
 export default class App extends Component<Props, State> {
   constructor(props: Props) {
-    super(props)
+    super(props);
     this.state = {
       appIsReady: false,
       scenario: '1',
       directionsVisible: false,
       aboutVisible: false
-    }
+    };
   }
 
   async loadAssets() {
-    const imageAssets = cacheImages([
-      require('./assets/images/bikesy-logo.png'),
-    ]);
+    const imageAssets = cacheImages([require('./assets/images/bikesy-logo.png')]);
 
     await Promise.all(imageAssets);
   }
@@ -69,14 +70,17 @@ export default class App extends Component<Props, State> {
   showWelcomeAlert() {
     Alert.alert(
       'Welcome to Bikesy',
-      'We\'ll find you the best bike route. Where do you want to start?',
+      "We'll find you the best bike route. Where do you want to start?",
       [
-        {text: 'Use My Current Location', onPress: () => this.setLocationFromUserLocation('start')},
-        {text: 'Choose From Map'},
-        {text: 'Enter an Address', onPress: () => this.setLocationFromTextInput('start')},
+        {
+          text: 'Use My Current Location',
+          onPress: () => this.setLocationFromUserLocation('start'),
+        },
+        { text: 'Choose From Map' },
+        { text: 'Enter an Address', onPress: () => this.setLocationFromTextInput('start') },
       ],
       { cancelable: true }
-    )
+    );
   }
 
   showEndLocationAlert() {
@@ -84,69 +88,66 @@ export default class App extends Component<Props, State> {
       'Where would you like to go?',
       'Select your destination.',
       [
-        {text: 'Use My Current Location', onPress: () => this.setLocationFromUserLocation('end')},
-        {text: 'Choose From Map'},
-        {text: 'Enter an Address', onPress: () => this.setLocationFromTextInput('end')},
+        { text: 'Use My Current Location', onPress: () => this.setLocationFromUserLocation('end') },
+        { text: 'Choose From Map' },
+        { text: 'Enter an Address', onPress: () => this.setLocationFromTextInput('end') },
       ],
       { cancelable: true }
-    )
+    );
   }
 
   updateRoute() {
-    const { startCoords, endCoords, scenario } = this.state
+    const { startCoords, endCoords, scenario } = this.state;
 
-    this.setState({ path: undefined })
+    this.setState({ path: undefined });
 
-    api.getRoute(startCoords, endCoords, scenario)
-    .then(results => {
-      if (!this.state.startCoords) {
-        return
-      }
+    getRoute(startCoords, endCoords, scenario)
+      .then(results => {
+        if (!this.state.startCoords) {
+          return;
+        }
 
-      const path = polyline.decode(results.path[0])
-      this.setState({
-        directions: results.directions,
-        elevationProfile: results.elevation_profile,
-        path
+        const path = polyline.decode(results.path[0]);
+        this.setState({
+          directions: results.directions,
+          elevationProfile: results.elevation_profile,
+          path,
+        });
       })
-    })
-    .catch(Errors.handleFetchError)
+      .catch(handleFetchError);
   }
 
   setLocationFromUserLocation(locationType: string) {
     navigator.geolocation.getCurrentPosition(result => {
       if (locationType === 'start') {
-        this.setStartLocation(result.coords)
+        this.setStartLocation(result.coords);
       } else if (locationType === 'end') {
-        this.setEndLocation(result.coords)
+        this.setEndLocation(result.coords);
       }
-    }, Errors.handleGeoLocationError)
+    }, handleGeoLocationError);
   }
 
   setLocationFromTextInput(locationType: string) {
-    const locationTypeText = locationType === 'start' ? 'start' : 'destination'
-    AlertIOS.prompt(
-      `Enter a ${locationTypeText} address`,
-      null,
-      address => {
-        api.geocode(address)
+    const locationTypeText = locationType === 'start' ? 'start' : 'destination';
+    AlertIOS.prompt(`Enter a ${locationTypeText} address`, null, address => {
+      geocode(address)
         .then(coordinate => {
-          if (!mapUtils.isWithinMapBoundaries(coordinate)) {
-            return Errors.handleOutOfBoundsError()
+          if (!isWithinMapBoundaries(coordinate)) {
+            return handleOutOfBoundsError()
           }
 
           if (locationType === 'start') {
             this.setState({
               startAddress: address,
-              startCoords: coordinate
-            })
-            this.showEndLocationAlert()
+              startCoords: coordinate,
+            });
+            this.showEndLocationAlert();
           } else if (locationType === 'end') {
             this.setState({
               endAddress: address,
-              endCoords: coordinate
-            })
-            this.updateRoute()
+              endCoords: coordinate,
+            });
+            this.updateRoute();
           }
         })
         .catch(error => {
@@ -154,70 +155,72 @@ export default class App extends Component<Props, State> {
             return Alert.alert(
               'Unable to find address',
               'Try another address, or place a pin directly on the map.',
-              [
-                {text: 'OK', onPress: () => this.setLocationFromTextInput(locationType)},
-              ],
+              [{ text: 'OK', onPress: () => this.setLocationFromTextInput(locationType) }],
               { cancelable: true }
-            )
+            );
           }
 
-          Errors.handleError(error);
-        })
-      }
-    )
+          handleError(error);
+        });
+    });
   }
 
   setStartLocation(coordinate) {
-    if (!mapUtils.isWithinMapBoundaries(coordinate)) {
-      return Errors.handleOutOfBoundsError()
+    if (!isWithinMapBoundaries(coordinate)) {
+      return handleOutOfBoundsError();
     }
 
-    this.setState({
-      startCoords: coordinate,
-      startAddress: undefined
-    }, () => {
-      if (this.state.endCoords) {
-        this.updateRoute()
-      } else {
-        this.showEndLocationAlert()
+    this.setState(
+      {
+        startAddress: undefined,
+        startCoords: coordinate,
+      },
+      () => {
+        if (this.state.endCoords) {
+          this.updateRoute();
+        } else {
+          this.showEndLocationAlert();
+        }
       }
-    })
+    );
 
-    api.reverseGeocode(coordinate)
-    .then(startAddress => {
-      this.setState({startAddress})
-    })
-    .catch(error => {
-      if (error.message === 'No matching features found') {
-        return
-      }
+    reverseGeocode(coordinate)
+      .then(startAddress => {
+        this.setState({ startAddress });
+      })
+      .catch(error => {
+        if (error.message === 'No matching features found') {
+          return;
+        }
 
-      Errors.handleError(error);
-    })
+        handleError(error);
+      });
   }
 
   setEndLocation(coordinate) {
-    if (!mapUtils.isWithinMapBoundaries(coordinate)) {
-      return Errors.handleOutOfBoundsError()
+    if (!isWithinMapBoundaries(coordinate)) {
+      return handleOutOfBoundsError();
     }
 
-    this.setState({
-      endCoords: coordinate,
-      endAddress: undefined
-    },
-    this.updateRoute)
+    this.setState(
+      {
+        endAddress: undefined,
+        endCoords: coordinate,
+      },
+      this.updateRoute
+    );
 
-    api.reverseGeocode(coordinate)
-    .then(endAddress => {
-      this.setState({endAddress})
-    })
-    .catch(error => {
-      if (error.message === 'No matching features found') {
-        return
-      }
+    reverseGeocode(coordinate)
+      .then(endAddress => {
+        this.setState({ endAddress })
+      })
+      .catch(error => {
+        if (error.message === 'No matching features found') {
+          return;
+        }
 
-      Errors.handleError(error);
-    })
+        handleError(error);
+      });
   }
 
   clearRoute() {
@@ -228,17 +231,17 @@ export default class App extends Component<Props, State> {
       endAddress: undefined,
       directions: undefined,
       elevationProfile: undefined,
-      path: undefined
-    })
-    this.showWelcomeAlert()
+      path: undefined,
+    });
+    this.showWelcomeAlert();
   }
 
   componentDidMount() {
-    this.showWelcomeAlert()
+    this.showWelcomeAlert();
   }
 
   render() {
-    StatusBar.setHidden(true)
+    StatusBar.setHidden(true);
 
     if (!this.state.appIsReady) {
       return (
@@ -246,7 +249,7 @@ export default class App extends Component<Props, State> {
           startAsync={this.loadAssets}
           onFinish={() => this.setState({ appIsReady: true })}
         />
-      )
+      );
     }
 
     const {
@@ -258,8 +261,9 @@ export default class App extends Component<Props, State> {
       elevationProfile,
       directions,
       directionsVisible,
-      aboutVisible
-    } = this.state
+      aboutVisible,
+    } = this.state;
+
     return (
       <View style={styles.container}>
         <Map
@@ -290,7 +294,7 @@ export default class App extends Component<Props, State> {
           hideModal={() => this.setState({aboutVisible: false})}
         />
       </View>
-    )
+    );
   }
 
   _renderAddresses() {
@@ -299,12 +303,12 @@ export default class App extends Component<Props, State> {
         {this._renderStartAddress()}
         {this._renderEndAddress()}
       </View>
-    )
+    );
   }
 
   _renderStartAddress() {
     if (!this.state.startAddress) {
-      return <View style={styles.addressContainer} />
+      return <View style={styles.addressContainer} />;
     }
 
     return (
@@ -312,12 +316,12 @@ export default class App extends Component<Props, State> {
         <Text style={styles.addressLabel}>Start Address:</Text>
         <Text style={styles.address}>{this.state.startAddress}</Text>
       </View>
-    )
+    );
   }
 
   _renderEndAddress() {
     if (!this.state.endAddress) {
-      return <View style={styles.addressContainer} />
+      return <View style={styles.addressContainer} />;
     }
 
     return (
@@ -325,7 +329,7 @@ export default class App extends Component<Props, State> {
         <Text style={styles.addressLabel}>End Address:</Text>
         <Text style={styles.address}>{this.state.endAddress}</Text>
       </View>
-    )
+    );
   }
 }
 
