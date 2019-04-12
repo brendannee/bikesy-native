@@ -1,21 +1,18 @@
 {
-  "name": "BikesyNative",
+  "name": "bikesy",
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "flow-bin": "^0.89.0",
-    "react-native-scripts": "2.0.1",
-    "jest-expo": "31.0.0",
-    "react-test-renderer": "16.5.0"
+    "jest-expo": "^32.0.0",
+    "react-test-renderer": "16.8.6"
   },
-  "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
   "scripts": {
     "start": "expo start",
     "eject": "expo eject",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "test": "jest",
-    "flow": "flow"
+    "clear-cache": "watchman watch-del-all && rm -rf $TMPDIR/react-* && rm -fr $TMPDIR/metro*"
   },
   "jest": {
     "preset": "jest-expo"
@@ -24,10 +21,10 @@
     "@mapbox/polyline": "^1.0.0",
     "@turf/bbox": "^6.0.1",
     "@turf/length": "^6.0.2",
-    "expo": "^31.0.6",
+    "expo": "^32.0.6",
     "lodash": "^4.17.11",
     "react": "16.5.0",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-31.0.1.tar.gz",
-    "victory-native": "^30.4.0"
+    "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.2.tar.gz",
+    "victory-native": "^32.0.2"
   }
 }
