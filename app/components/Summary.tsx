@@ -52,28 +52,28 @@ const styles = StyleSheet.create({
     paddingTop: 2,
     paddingBottom: 4,
     paddingLeft: 8,
-    paddingRight: 8
+    paddingRight: 8,
   },
 
   overview: {
-    flexDirection:'row',
+    flexDirection: 'row',
     paddingBottom: 5,
     justifyContent: 'space-between',
   },
 
   resultText: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#273443',
     paddingBottom: 3,
     paddingTop: 4,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
 
   elevationText: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#273443',
     paddingBottom: 10,
     paddingTop: 4,
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+  },
 });
