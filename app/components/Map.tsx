@@ -11,6 +11,7 @@ import { MaterialIcons, Entypo } from '@expo/vector-icons';
 import Summary from './Summary';
 
 import _ from 'lodash';
+import { ifIphoneX } from 'react-native-iphone-x-helper';
 import { formatAddressLines } from '../services/formatters';
 import { getRegion, regionContainsPoint } from '../services/map-utils';
 import config from '../../config.json';
@@ -223,6 +224,17 @@ const styles = StyleSheet.create(Object.assign({}, globalStyles, {
     flex: 1
   },
 
+  logo: {
+    position: 'absolute',
+    ...ifIphoneX({
+      top: 40
+    }, {
+      top: 10
+    }),
+    left: 15,
+    zIndex: 1
+  },
+
   callout: {
     width: 120,
     padding: 5
@@ -230,7 +242,11 @@ const styles = StyleSheet.create(Object.assign({}, globalStyles, {
 
   clearButton: {
     position: 'absolute',
-    top: 35,
+    ...ifIphoneX({
+      top: 40
+    }, {
+      top: 10
+    }),
     right: 15,
     zIndex: 1,
   },

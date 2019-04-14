@@ -26,13 +26,6 @@ export default {
     color: '#ffffff'
   },
 
-  logo: {
-    position: 'absolute',
-    top: 35,
-    left: 15,
-    zIndex: 1
-  },
-
   markerTitle: {
     fontSize: 18,
     fontWeight: 'bold'

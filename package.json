@@ -28,7 +28,6 @@
     "ts-watch": "tsc -w",
     "ts-lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}'",
     "ts-lint-watch": "yarn ts-lint; chokidar 'src/**/*.{ts,tsx}' -c 'yarn ts-lint'",
-    "test": "jest",
     "test-watch": "jest --watch"
   },
   "jest": {
@@ -45,6 +44,7 @@
     "lodash": "^4.17.11",
     "react": "16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.2.tar.gz",
+    "react-native-iphone-x-helper": "^1.2.0",
     "victory-native": "^32.0.2"
   }
 }
