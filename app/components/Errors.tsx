@@ -10,7 +10,7 @@ export const handleFetchError = (error) => {
 };
 
 export const handleError = (error) => {
-  console.error(error);
+  console.log(error);
   Alert.alert(
     'Unknown Error',
     'Something unexpected happened. Try again later.',

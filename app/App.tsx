@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
   Alert,
   AlertIOS,
+  NetInfo,
   StatusBar,
   StyleSheet,
   Text,
@@ -57,7 +58,7 @@ export default class App extends Component<Props, State> {
       appIsReady: false,
       scenario: '1',
       directionsVisible: false,
-      aboutVisible: false
+      aboutVisible: false,
     };
   }
 
@@ -130,38 +131,49 @@ export default class App extends Component<Props, State> {
   setLocationFromTextInput(locationType: string) {
     const locationTypeText = locationType === 'start' ? 'start' : 'destination';
     AlertIOS.prompt(`Enter a ${locationTypeText} address`, null, address => {
-      geocode(address)
-        .then(coordinate => {
-          if (!isWithinMapBoundaries(coordinate)) {
-            return handleOutOfBoundsError()
-          }
+      NetInfo.isConnected.fetch().done(isConnected => {
+        if (!isConnected) {
+          return Alert.alert(
+            'No connecteion',
+            'Your phone has no access to the internet. Please connect and try again.',
+            [{ text: 'OK' }],
+            { cancelable: true }
+          );
+        }
 
-          if (locationType === 'start') {
-            this.setState({
-              startAddress: address,
-              startCoords: coordinate,
-            });
-            this.showEndLocationAlert();
-          } else if (locationType === 'end') {
-            this.setState({
-              endAddress: address,
-              endCoords: coordinate,
-            });
-            this.updateRoute();
-          }
-        })
-        .catch(error => {
-          if (error.message === 'No matching features found') {
-            return Alert.alert(
-              'Unable to find address',
-              'Try another address, or place a pin directly on the map.',
-              [{ text: 'OK', onPress: () => this.setLocationFromTextInput(locationType) }],
-              { cancelable: true }
-            );
-          }
+        geocode(address)
+          .then(coordinate => {
+            if (!isWithinMapBoundaries(coordinate)) {
+              return handleOutOfBoundsError()
+            }
 
-          handleError(error);
-        });
+            if (locationType === 'start') {
+              this.setState({
+                startAddress: address,
+                startCoords: coordinate,
+              });
+              this.showEndLocationAlert();
+            } else if (locationType === 'end') {
+              this.setState({
+                endAddress: address,
+                endCoords: coordinate,
+              });
+              this.updateRoute();
+            }
+          })
+          .catch(error => {
+            if (error.message === 'No matching features found') {
+              return Alert.alert(
+                'Unable to find address',
+                'Try another address, or place a pin directly on the map.',
+                [{ text: 'OK', onPress: () => this.setLocationFromTextInput(locationType) }],
+                { cancelable: true }
+              );
+            }
+
+            handleError(error);
+          });
+      });
     });
   }
 
@@ -170,31 +182,42 @@ export default class App extends Component<Props, State> {
       return handleOutOfBoundsError();
     }
 
-    this.setState(
-      {
-        startAddress: undefined,
-        startCoords: coordinate,
-      },
-      () => {
-        if (this.state.endCoords) {
-          this.updateRoute();
-        } else {
-          this.showEndLocationAlert();
-        }
+    NetInfo.isConnected.fetch().done(isConnected => {
+      if (!isConnected) {
+        return Alert.alert(
+          'No connecteion',
+          'Your phone has no access to the internet. Please connect and try again.',
+          [{ text: 'OK' }],
+          { cancelable: true }
+        );
       }
-    );
 
-    reverseGeocode(coordinate)
-      .then(startAddress => {
-        this.setState({ startAddress });
-      })
-      .catch(error => {
-        if (error.message === 'No matching features found') {
-          return;
+      this.setState(
+        {
+          startAddress: undefined,
+          startCoords: coordinate,
+        },
+        () => {
+          if (this.state.endCoords) {
+            this.updateRoute();
+          } else {
+            this.showEndLocationAlert();
+          }
         }
+      );
 
-        handleError(error);
-      });
+      reverseGeocode(coordinate)
+        .then(startAddress => {
+          this.setState({ startAddress });
+        })
+        .catch(error => {
+          if (error.message === 'No matching features found') {
+            return;
+          }
+
+          handleError(error);
+        });
+    });
   }
 
   setEndLocation(coordinate) {
@@ -202,25 +225,36 @@ export default class App extends Component<Props, State> {
       return handleOutOfBoundsError();
     }
 
-    this.setState(
-      {
-        endAddress: undefined,
-        endCoords: coordinate,
-      },
-      this.updateRoute
-    );
+    NetInfo.isConnected.fetch().done(isConnected => {
+      if (!isConnected) {
+        return Alert.alert(
+          'No connecteion',
+          'Your phone has no access to the internet. Please connect and try again.',
+          [{ text: 'OK' }],
+          { cancelable: true }
+        );
+      }
 
-    reverseGeocode(coordinate)
-      .then(endAddress => {
-        this.setState({ endAddress })
-      })
-      .catch(error => {
-        if (error.message === 'No matching features found') {
-          return;
-        }
+      this.setState(
+        {
+          endAddress: undefined,
+          endCoords: coordinate,
+        },
+        this.updateRoute
+      );
 
-        handleError(error);
-      });
+      reverseGeocode(coordinate)
+        .then(endAddress => {
+          this.setState({ endAddress });
+        })
+        .catch(error => {
+          if (error.message === 'No matching features found') {
+            return;
+          }
+
+          handleError(error);
+        });
+    });
   }
 
   clearRoute() {

@@ -25,7 +25,8 @@ export const reverseGeocode = async coordinate => {
 };
 
 export const geocode = async (address: string) => {
-  const parameters = `${address}.json?bbox=${config.boundsLeft},${config.boundsBottom},${config.boundsRight},${config.boundsTop}&access_token=${config.mapboxAccessToken}`
+  const parameters = `${address}.json?bbox=${config.boundsLeft},${config.boundsBottom},${config.boundsRight},${config.boundsTop}&access_token=${config.mapboxAccessToken}`;
+  
   const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${parameters}`);
   const result = await response.json();
 
