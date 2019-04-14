@@ -71,6 +71,15 @@ export default class App extends Component<Props, State> {
     await Promise.all(imageAssets);
   }
 
+  showNoConnectionAlert() {
+    Alert.alert(
+      'No connection',
+      'Your phone has no access to the internet. Please connect and try again.',
+      [{ text: 'OK' }],
+      { cancelable: true }
+    );
+  }
+
   showWelcomeAlert() {
     Alert.alert(
       'Welcome to Bikesy',
@@ -115,14 +124,26 @@ export default class App extends Component<Props, State> {
   updateRoute() {
     const { startCoords, endCoords, scenario } = this.state;
 
+    if (startCoords.latitude === endCoords.latitude && startCoords.longitude == endCoords.longitude) {
+      this.setState({
+        startCoords: undefined,
+        endCoords: undefined,
+      });
+
+      return Alert.alert(
+        'Same start and destination location',
+        'You chose the exact same start and destination locations. Try choosing two distinct places to route between.',
+        [{ 
+          onPress: () => this.showWelcomeAlert(),
+          text: 'OK',
+        }],
+        { cancelable: true }
+      );
+    }
+
     NetInfo.isConnected.fetch().done(isConnected => {
       if (!isConnected) {
-        return Alert.alert(
-          'No connecteion',
-          'Your phone has no access to the internet. Please connect and try again.',
-          [{ text: 'OK' }],
-          { cancelable: true }
-        );
+        return this.showNoConnectionAlert();
       }
 
       this.setState({ path: undefined });
@@ -180,12 +201,7 @@ export default class App extends Component<Props, State> {
 
     NetInfo.isConnected.fetch().done(isConnected => {
       if (!isConnected) {
-        return Alert.alert(
-          'No connecteion',
-          'Your phone has no access to the internet. Please connect and try again.',
-          [{ text: 'OK' }],
-          { cancelable: true }
-        );
+        return this.showNoConnectionAlert();
       }
 
       this.setState(
@@ -223,12 +239,7 @@ export default class App extends Component<Props, State> {
 
     NetInfo.isConnected.fetch().done(isConnected => {
       if (!isConnected) {
-        return Alert.alert(
-          'No connecteion',
-          'Your phone has no access to the internet. Please connect and try again.',
-          [{ text: 'OK' }],
-          { cancelable: true }
-        );
+        return this.showNoConnectionAlert();
       }
 
       this.setState(
