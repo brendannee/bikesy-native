@@ -4,7 +4,8 @@ import {
   StyleSheet,
   Text,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
+  Vibration
 } from 'react-native';
 import { MapView } from 'expo';
 import { MaterialIcons, Entypo } from '@expo/vector-icons';
@@ -60,8 +61,10 @@ export default class Map extends Component<Props, State> {
   setMarker(coordinate) {
     const { setStartLocation, setEndLocation, startCoords, endCoords } = this.props;
     if (!startCoords) {
+      Vibration.vibrate();
       setStartLocation(coordinate);
     } else if (!endCoords) {
+      Vibration.vibrate();
       setEndLocation(coordinate);
     }
   }
