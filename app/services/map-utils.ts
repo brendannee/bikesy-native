@@ -15,7 +15,7 @@ interface Region {
   longitudeDelta: number;
 }
 
-const polylineToGeoJSON = (polyline: string) => ({
+const polylineToGeoJSON = (polyline: Array<[number, number]>) => ({
   geometry: {
     coordinates: polyline,
     type: 'LineString',
@@ -24,7 +24,7 @@ const polylineToGeoJSON = (polyline: string) => ({
   type: 'Feature',
 });
 
-export const getRegion = (polyline: string) => {
+export const getRegion = (polyline: Array<[number, number]>) => {
   const bbox = turfBBox(polylineToGeoJSON(polyline));
   const paddingPercent = 0.15;
 
@@ -38,7 +38,7 @@ export const getRegion = (polyline: string) => {
   return region;
 };
 
-export const getDistanceMi = (polyline: string) => {
+export const getDistanceMi = (polyline: Array<[number, number]>) => {
   return turfLength(polylineToGeoJSON(polyline), { units: 'miles' });
 };
 

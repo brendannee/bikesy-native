@@ -9,12 +9,12 @@ export default {
     justifyContent: 'center',
     height: 34,
     borderRadius: 4,
-    backgroundColor: '#5ecaff',
+    backgroundColor: '#226fbe',
   },
 
   buttonText: {
     color: '#ffffff',
-    fontSize: 14
+    fontSize: 16
   },
 
   buttonIcon: {
@@ -39,7 +39,7 @@ export default {
   },
 
   modalContent: {
-    paddingTop: 10,
+    paddingTop: 5,
     paddingRight: 15,
     paddingLeft: 15,
     paddingBottom: 25,

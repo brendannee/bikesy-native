@@ -36,9 +36,9 @@ type State = {
     latitude: number,
     longitude: number,
     latitudeDelta: number,
-    longitudeDelta: number
+    longitudeDelta: number,
   },
-  zoom: number
+  zoom: number,
 }
 
 export default class Map extends Component<Props, State> {
@@ -48,9 +48,9 @@ export default class Map extends Component<Props, State> {
     this.state = {
       region: {
         latitude: config.initialCenterLat,
-        latitudeDelta: 0.0922,
+        latitudeDelta: 0.0722,
         longitude: config.initialCenterLng,
-        longitudeDelta: 0.0421,
+        longitudeDelta: 0.0321,
       },
       zoom: config.initialZoom,
     };
@@ -75,7 +75,7 @@ export default class Map extends Component<Props, State> {
       <MapView.Marker
         coordinate={startCoords}
         pinColor="#126c3f"
-        draggable
+        draggable={true}
         onDragEnd={e => setStartLocation(e.nativeEvent.coordinate)}
       >
         <MapView.Callout style={styles.callout}>
@@ -96,7 +96,7 @@ export default class Map extends Component<Props, State> {
       <MapView.Marker
         coordinate={endCoords}
         pinColor="#cf3043"
-        draggable
+        draggable={true}
         onDragEnd={e => setEndLocation(e.nativeEvent.coordinate)}
       >
         <MapView.Callout style={styles.callout}>
@@ -108,7 +108,7 @@ export default class Map extends Component<Props, State> {
   }
 
   getRouteLine() {
-    const { path } = this.props;
+    const { endCoords, startCoords, path } = this.props;
     if (!path) {
       return null;
     }
@@ -117,6 +117,8 @@ export default class Map extends Component<Props, State> {
       latitude: coord[0],
       longitude: coord[1],
     }));
+    coordinates.unshift(startCoords);
+    coordinates.push(endCoords);
 
     return <MapView.Polyline coordinates={coordinates} strokeColor="#ff6712" strokeWidth={3} />;
   }
@@ -166,7 +168,7 @@ export default class Map extends Component<Props, State> {
   }
 
   _renderDirectionsButton() {
-    const { path, showDirections } = this.props
+    const { path, showDirections } = this.props;
     if (!path) {
       return null;
     }
@@ -195,11 +197,13 @@ export default class Map extends Component<Props, State> {
           onPress={e => this.setMarker(e.nativeEvent.coordinate)}
           mapType="mutedStandard"
           showsUserLocation={true}
+          provider="google"
+          zoomControlEnabled={true}
           mapPadding={{
-            top: 105,
+            top: 100,
             right: 15,
             bottom: 10,
-            left: 15
+            left: 15,
           }}
         >
           {this.getStartMarker()}
@@ -210,7 +214,7 @@ export default class Map extends Component<Props, State> {
         {this._renderDirectionsButton()}
         <Summary path={this.props.path} elevationProfile={this.props.elevationProfile} />
       </View>
-    )
+    );
   }
 }
 
@@ -234,6 +238,7 @@ const styles = StyleSheet.create(Object.assign({}, globalStyles, {
   buttonContainer: {
     paddingRight: 15,
     paddingLeft: 15,
-    paddingTop: 5
+    paddingTop: 10,
+    paddingBottom: 10,
   }
 }));

@@ -25,7 +25,7 @@ import { geocode, getRoute, reverseGeocode } from './services/api';
 
 import globalStyles from './styles/styles';
 
-type Props = {}
+type Props = {};
 
 type State = {
   scenario: string,
@@ -37,8 +37,8 @@ type State = {
   endCoords?: mixed,
   directions?: mixed,
   elevationProfile?: Array<[number, number]>,
-  path?: string
-}
+  path?: Array<[number, number]>,
+};
 
 function cacheImages(images) {
   return images.map(image => {
