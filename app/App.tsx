@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {
   Alert,
-  AlertIOS,
   NetInfo,
   StatusBar,
   StyleSheet,
@@ -10,6 +9,7 @@ import {
 } from 'react-native';
 import About from './components/About';
 import Directions from './components/Directions';
+import LocationInput from './components/LocationInput';
 import {
   handleError,
   handleFetchError,
@@ -22,7 +22,7 @@ import { AppLoading, Asset } from 'expo';
 import polyline from '@mapbox/polyline';
 
 import { isWithinMapBoundaries } from './services/map-utils';
-import { geocode, getRoute, reverseGeocode } from './services/api';
+import { getRoute, reverseGeocode } from './services/api';
 
 import globalStyles from './styles/styles';
 
@@ -39,6 +39,8 @@ type State = {
   directions?: mixed,
   elevationProfile?: Array<[number, number]>,
   path?: Array<[number, number]>,
+  locationType: string,
+  locationInputVisible: boolean,
 };
 
 function cacheImages(images) {
@@ -59,6 +61,7 @@ export default class App extends Component<Props, State> {
       scenario: '1',
       directionsVisible: false,
       aboutVisible: false,
+      locationInputVisible: false,
     };
   }
 
@@ -74,11 +77,17 @@ export default class App extends Component<Props, State> {
       "We'll find you the best bike route. Where do you want to start?",
       [
         {
-          text: 'Use My Current Location',
           onPress: () => this.setLocationFromUserLocation('start'),
+          text: 'Use My Current Location',
         },
         { text: 'Choose From Map' },
-        { text: 'Enter an Address', onPress: () => this.setLocationFromTextInput('start') },
+        {
+          onPress: () => this.setState({
+            locationInputVisible: true,
+            locationType: 'start',
+          }),
+          text: 'Enter an Address',
+        },
       ],
       { cancelable: true }
     );
@@ -91,7 +100,13 @@ export default class App extends Component<Props, State> {
       [
         { text: 'Use My Current Location', onPress: () => this.setLocationFromUserLocation('end') },
         { text: 'Choose From Map' },
-        { text: 'Enter an Address', onPress: () => this.setLocationFromTextInput('end') },
+        {
+          text: 'Enter an Address',
+          onPress: () => this.setState({
+            locationInputVisible: true,
+            locationType: 'end',
+          })
+        },
       ],
       { cancelable: true }
     );
@@ -100,22 +115,33 @@ export default class App extends Component<Props, State> {
   updateRoute() {
     const { startCoords, endCoords, scenario } = this.state;
 
-    this.setState({ path: undefined });
+    NetInfo.isConnected.fetch().done(isConnected => {
+      if (!isConnected) {
+        return Alert.alert(
+          'No connecteion',
+          'Your phone has no access to the internet. Please connect and try again.',
+          [{ text: 'OK' }],
+          { cancelable: true }
+        );
+      }
 
-    getRoute(startCoords, endCoords, scenario)
-      .then(results => {
-        if (!this.state.startCoords) {
-          return;
-        }
+      this.setState({ path: undefined });
 
-        const path = polyline.decode(results.path[0]);
-        this.setState({
-          directions: results.directions,
-          elevationProfile: results.elevation_profile,
-          path,
-        });
-      })
-      .catch(handleFetchError);
+      getRoute(startCoords, endCoords, scenario)
+        .then(results => {
+          if (!this.state.startCoords) {
+            return;
+          }
+
+          const path = polyline.decode(results.path[0]);
+          this.setState({
+            directions: results.directions,
+            elevationProfile: results.elevation_profile,
+            path,
+          });
+        })
+        .catch(handleFetchError);
+    });
   }
 
   setLocationFromUserLocation(locationType: string) {
@@ -128,53 +154,23 @@ export default class App extends Component<Props, State> {
     }, handleGeoLocationError);
   }
 
-  setLocationFromTextInput(locationType: string) {
-    const locationTypeText = locationType === 'start' ? 'start' : 'destination';
-    AlertIOS.prompt(`Enter a ${locationTypeText} address`, null, address => {
-      NetInfo.isConnected.fetch().done(isConnected => {
-        if (!isConnected) {
-          return Alert.alert(
-            'No connecteion',
-            'Your phone has no access to the internet. Please connect and try again.',
-            [{ text: 'OK' }],
-            { cancelable: true }
-          );
-        }
+  setLocationFromTextInput(address: string, coordinate: {}) {
+    const { locationType } = this.state;
+    this.setState({ locationInputVisible: false });
 
-        geocode(address)
-          .then(coordinate => {
-            if (!isWithinMapBoundaries(coordinate)) {
-              return handleOutOfBoundsError()
-            }
-
-            if (locationType === 'start') {
-              this.setState({
-                startAddress: address,
-                startCoords: coordinate,
-              });
-              this.showEndLocationAlert();
-            } else if (locationType === 'end') {
-              this.setState({
-                endAddress: address,
-                endCoords: coordinate,
-              });
-              this.updateRoute();
-            }
-          })
-          .catch(error => {
-            if (error.message === 'No matching features found') {
-              return Alert.alert(
-                'Unable to find address',
-                'Try another address, or place a pin directly on the map.',
-                [{ text: 'OK', onPress: () => this.setLocationFromTextInput(locationType) }],
-                { cancelable: true }
-              );
-            }
-
-            handleError(error);
-          });
+    if (locationType === 'start') {
+      this.setState({
+        startAddress: address,
+        startCoords: coordinate,
       });
-    });
+      this.showEndLocationAlert();
+    } else if (locationType === 'end') {
+      this.setState({
+        endAddress: address,
+        endCoords: coordinate,
+      });
+      this.updateRoute();
+    }
   }
 
   setStartLocation(coordinate) {
@@ -296,7 +292,11 @@ export default class App extends Component<Props, State> {
       directions,
       directionsVisible,
       aboutVisible,
+      locationType,
+      locationInputVisible,
     } = this.state;
+
+    const locationTypeText = locationType === 'start' ? 'start' : 'destination';
 
     return (
       <View style={styles.container}>
@@ -323,9 +323,14 @@ export default class App extends Component<Props, State> {
           hideModal={() => this.setState({directionsVisible: false})}
         />
         <About
-          path={path}
           modalVisible={aboutVisible}
           hideModal={() => this.setState({aboutVisible: false})}
+        />
+        <LocationInput
+          title={`Enter a ${locationTypeText} address`}
+          modalVisible={locationInputVisible}
+          hideModal={() => this.setState({ locationInputVisible: false })}
+          onSubmit={(address, coordinate) => this.setLocationFromTextInput(address, coordinate)}
         />
       </View>
     );

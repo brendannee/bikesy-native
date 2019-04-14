@@ -77,37 +77,39 @@ export default class Directions extends Component<Props> {
     return (
       <Modal
         animationType="slide"
-        transparent={false}
         visible={this.props.modalVisible}
         onRequestClose={this.props.hideModal}
+        transparent={true}
       >
-        <SafeAreaView style={{ flex: 1 }}>
-          <View style={styles.modalContent}>
-            <TouchableOpacity onPress={this.props.showAbout} style={styles.directionsLogo}>
-              <Image source={require('../assets/images/bikesy-logo.png')} />
-            </TouchableOpacity>
-            <ScrollView>
-              <Text style={styles.directionTitle}>Directions to {this.props.endAddress}</Text>
-              <View style={styles.summary}>
-                <Text style={styles.summaryText}>
-                  {totalDistance} miles, {totalTime}
+        <View style={[styles.modal, styles.modalSolid]}>
+          <SafeAreaView style={{ flex: 1 }}>
+            <View style={styles.modalContent}>
+              <View style={styles.directionsLogo}>
+                <Image source={require('../assets/images/bikesy-logo.png')} />
+              </View>
+              <ScrollView>
+                <Text style={styles.directionTitle}>Directions to {this.props.endAddress}</Text>
+                <View style={styles.summary}>
+                  <Text style={styles.summaryText}>
+                    {totalDistance} miles, {totalTime}
+                  </Text>
+                  <Text style={styles.summaryText}>{totalElevGain} of total climbing</Text>
+                </View>
+                {this.formatDirections()}
+                <Text style={styles.disclaimer}>
+                  We offer no guarantee regarding roadway conditions or safety of the proposed routes.
+                  Use your best judgment when choosing a route. Obey all vehicle code provisions.
                 </Text>
-                <Text style={styles.summaryText}>{totalElevGain} of total climbing</Text>
-              </View>
-              {this.formatDirections()}
-              <Text style={styles.disclaimer}>
-                We offer no guarantee regarding roadway conditions or safety of the proposed routes.
-                Use your best judgment when choosing a route. Obey all vehicle code provisions.
-              </Text>
-            </ScrollView>
-            <TouchableOpacity onPress={this.props.hideModal}>
-              <View style={styles.button}>
-                <Entypo name="map" size={20} style={styles.buttonIcon} />
-                <Text style={styles.buttonText}>View Map</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </SafeAreaView>
+              </ScrollView>
+              <TouchableOpacity onPress={this.props.hideModal} style={styles.closeButton}>
+                <View style={styles.button}>
+                  <Entypo name="map" size={20} style={styles.buttonIcon} />
+                  <Text style={styles.buttonText}>View Map</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </SafeAreaView>
+        </View>
       </Modal>
     );
   }
@@ -142,6 +144,10 @@ const styles = StyleSheet.create(Object.assign({}, globalStyles, {
   directionStepComponent: {
     fontWeight: 'bold',
     color: '#273443'
+  },
+
+  closeButton: {
+    marginTop: 5,
   },
 
   disclaimer: {

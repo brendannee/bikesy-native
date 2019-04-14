@@ -31,11 +31,21 @@ export default {
     fontWeight: 'bold'
   },
 
+  modal: {
+    flex: 1,
+    margin: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+  },
+
+  modalSolid: {
+    backgroundColor: 'white',
+  },
+
   modalContent: {
     paddingTop: 5,
     paddingRight: 15,
     paddingLeft: 15,
-    paddingBottom: 25,
+    paddingBottom: 10,
     flex: 1,
   },
 

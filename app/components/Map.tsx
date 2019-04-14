@@ -189,9 +189,6 @@ export default class Map extends Component<Props, State> {
   render() {
     return (
       <View style={styles.map}>
-        <TouchableOpacity onPress={this.props.showAbout} style={styles.logo}>
-          <Image source={require('../assets/images/bikesy-logo.png')} />
-        </TouchableOpacity>
         <MapView
           style={styles.map}
           region={this.state.region}
@@ -211,6 +208,9 @@ export default class Map extends Component<Props, State> {
           {this.getEndMarker()}
           {this.getRouteLine()}
         </MapView>
+        <TouchableOpacity onPress={this.props.showAbout} style={styles.logo}>
+          <Image source={require('../assets/images/bikesy-logo.png')} />
+        </TouchableOpacity>
         {this._renderClearButton()}
         {this._renderDirectionsButton()}
         <Summary path={this.props.path} elevationProfile={this.props.elevationProfile} />

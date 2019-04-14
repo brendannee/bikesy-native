@@ -2,6 +2,7 @@ import config from '../../config.json';
 
 import turfBBox from '@turf/bbox';
 import turfLength from '@turf/length';
+import turfDistance from '@turf/distance';
 
 interface Point {
   latitude: number;
@@ -58,4 +59,23 @@ export const isWithinMapBoundaries = (point: Point) => {
     point.longitude > config.boundsLeft &&
     point.longitude < config.boundsRight
   );
+};
+
+export const getMapBoundariesCenter = () => {
+  return {
+    latitude: config.boundsBottom + (config.boundsTop - config.boundsBottom) / 2,
+    longitude: config.boundsLeft + (config.boundsRight - config.boundsLeft) / 2,
+  };
+};
+
+export const getMapBoundariesRadius = () => {
+  const diagonalDistance = turfDistance(
+    [config.boundsLeft, config.boundsTop],
+    [config.boundsRight, config.boundsBottom],
+    {
+      units: 'meters',
+    }
+  );
+
+  return diagonalDistance / 2;
 };

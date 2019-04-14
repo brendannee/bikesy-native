@@ -28,7 +28,7 @@ export const handleGeoLocationError = (error) => {
   );
 };
 
-export const handleOutOfBoundsError = (error) => {
+export const handleOutOfBoundsError = () => {
   Alert.alert(
     'Bikesy only supports routes in the San Francisco Bay Area',
     'Try a route closer to San Francisco.',
