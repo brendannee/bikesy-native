@@ -16,12 +16,14 @@ import { getMapBoundariesCenter, getMapBoundariesRadius } from '../services/map-
 const uuidv4 = require('uuid/v4');
 import config from '../../config.json';
 
+import CoordinateType from '../types/coordinate';
+
 const sessiontoken = uuidv4();
 
-type Props = {
-  modalVisible: boolean,
-  onSubmit: (address: string, [number, number]) => void,
-  locationTypeText: string,
+interface Props {
+  modalVisible: boolean;
+  onSubmit: (address: string, coord: CoordinateType) => void;
+  locationTypeText: string;
 }
 
 export default class About extends Component<Props> {
@@ -29,16 +31,23 @@ export default class About extends Component<Props> {
     super(props);
   }
 
+  handleAutocompleteSelect = (data, details) => {
+    const { onSubmit } = this.props;
+    const coordinate = {
+      latitude: details.geometry.location.lat,
+      longitude: details.geometry.location.lng,
+    };
+
+    onSubmit(details.formatted_address, coordinate);
+  };
+
   render() {
     const boundsCenter = getMapBoundariesCenter();
     const radius = getMapBoundariesRadius();
     const { onSubmit, modalVisible, locationTypeText } = this.props;
 
     return (
-      <Modal
-        isVisible={modalVisible}
-        onBackButtonPress={onSubmit}
-      >
+      <Modal isVisible={modalVisible} onBackButtonPress={onSubmit}>
         <SafeAreaView style={styles.modal}>
           <TouchableOpacity onPress={onSubmit} style={styles.backControl}>
             <Ionicons name="ios-arrow-back" size={26} style={styles.backButton} />
@@ -53,14 +62,7 @@ export default class About extends Component<Props> {
               keyboardAppearance={'light'}
               listViewDisplayed='auto'
               fetchDetails={true}
-              onPress={(data, details) => {
-                const coordinate = {
-                  latitude: details.geometry.location.lat,
-                  longitude: details.geometry.location.lng,
-                };
-
-                onSubmit(details.formatted_address, coordinate);
-              }}
+              onPress={this.handleAutocompleteSelect}
               query={{
                 key: config.googleMapsApiKey,
                 language: 'en',
@@ -86,12 +88,14 @@ export default class About extends Component<Props> {
   }
 }
 
-const styles = StyleSheet.create(Object.assign({}, globalStyles, {
+const styles = StyleSheet.create({
+  ...globalStyles,
+
   backControl: {
-    flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: 10,
+    flexDirection: 'row',
     marginBottom: 10,
+    marginLeft: 10,
   },
 
   backButton: {
@@ -106,11 +110,11 @@ const styles = StyleSheet.create(Object.assign({}, globalStyles, {
   },
 
   modal: {
-    flex: 1,
     backgroundColor: 'white',
+    flex: 1,
   },
 
   autocomplete: {
     flex: 1,
   },
-}))
+});

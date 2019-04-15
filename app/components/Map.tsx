@@ -1,14 +1,7 @@
 import React, { Component } from 'react';
-import {
-  View,
-  StyleSheet,
-  Text,
-  Image,
-  TouchableOpacity,
-  Vibration
-} from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, Vibration, View } from 'react-native';
 import { MapView } from 'expo';
-import { MaterialIcons, Entypo } from '@expo/vector-icons';
+import { Entypo, MaterialIcons } from '@expo/vector-icons';
 import Summary from './Summary';
 
 import _ from 'lodash';
@@ -19,28 +12,30 @@ import config from '../../config.json';
 
 import globalStyles from '../styles/styles';
 
-type Props = {
-  startCoords: any,
-  endCoords: any,
-  setStartLocation: (mixed) => any,
-  setEndLocation: (mixed) => mianyxed,
-  startAddress: string,
-  endAddress: string,
-  path: Array<[number, number]>,
-  elevationProfile: Array<[number, number]>,
-  showAbout: () => any,
-  showDirections: () => any,
-  clearRoute: () => any,
-};
+import CoordinateType from './types/coordinate';
 
-type State = {
+interface Props {
+  startCoords: any;
+  endCoords: any;
+  setStartLocation: (coord: CoordinateType) => void;
+  setEndLocation: (coord: CoordinateType) => void;
+  startAddress: string;
+  endAddress: string;
+  path: Array<[number, number]>;
+  elevationProfile: Array<[number, number]>;
+  showAbout: () => any;
+  showDirections: () => any;
+  clearRoute: () => any;
+}
+
+interface State {
   region: {
-    latitude: number,
-    longitude: number,
-    latitudeDelta: number,
-    longitudeDelta: number,
-  },
-  zoom: number,
+    latitude: number;
+    longitude: number;
+    latitudeDelta: number;
+    longitudeDelta: number;
+  };
+  zoom: number;
 }
 
 export default class Map extends Component<Props, State> {
@@ -58,7 +53,7 @@ export default class Map extends Component<Props, State> {
     };
   }
 
-  setMarker(coordinate) {
+  setMarker(coordinate: CoordinateType) {
     const { setStartLocation, setEndLocation, startCoords, endCoords } = this.props;
     if (!startCoords) {
       Vibration.vibrate();
@@ -222,42 +217,50 @@ export default class Map extends Component<Props, State> {
   }
 }
 
-const styles = StyleSheet.create(Object.assign({}, globalStyles, {
+const styles = StyleSheet.create({
+  ...globalStyles,
+
   map: {
-    flex: 1
+    flex: 1,
   },
 
   logo: {
     position: 'absolute',
-    ...ifIphoneX({
-      top: 40
-    }, {
-      top: 10
-    }),
+    ...ifIphoneX(
+      {
+        top: 40,
+      },
+      {
+        top: 10,
+      }
+    ),
     left: 15,
-    zIndex: 1
+    zIndex: 1,
   },
 
   callout: {
+    padding: 5,
     width: 120,
-    padding: 5
   },
 
   clearButton: {
     position: 'absolute',
-    ...ifIphoneX({
-      top: 40
-    }, {
-      top: 10
-    }),
+    ...ifIphoneX(
+      {
+        top: 40,
+      },
+      {
+        top: 10,
+      }
+    ),
     right: 15,
     zIndex: 1,
   },
 
   buttonContainer: {
-    paddingRight: 15,
-    paddingLeft: 15,
-    paddingTop: 10,
     paddingBottom: 5,
-  }
-}));
+    paddingLeft: 15,
+    paddingRight: 15,
+    paddingTop: 10,
+  },
+});

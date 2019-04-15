@@ -23,15 +23,15 @@ import { getDistanceMi } from '../services/map-utils';
 
 import globalStyles from '../styles/styles'
 
-type Props = {
-  directions?: Array<mixed>,
-  path: string,
-  endAddress: string,
-  elevationProfile: mixed,
-  modalVisible: boolean,
-  showAbout: () => mixed,
-  hideModal: () => mixed
-};
+interface Props {
+  directions?: object[];
+  path: string;
+  endAddress: string;
+  elevationProfile: void;
+  modalVisible: boolean;
+  showAbout: () => void;
+  hideModal: () => void;
+}
 
 export default class Directions extends Component<Props> {
   constructor(props: Props) {
@@ -115,22 +115,24 @@ export default class Directions extends Component<Props> {
   }
 }
 
-const styles = StyleSheet.create(Object.assign({}, globalStyles, {
+const styles = StyleSheet.create({
+  ...globalStyles,
+
   directionsLogo: {
-    marginBottom: 10
+    marginBottom: 10,
   },
 
   directionTitle: {
     fontSize: 18,
-    paddingBottom: 10
+    paddingBottom: 10,
   },
 
   summary: {
-    paddingBottom: 10
+    paddingBottom: 10,
   },
 
   summaryText: {
-    color: '#6D6D6D'
+    color: '#6D6D6D',
   },
 
   directionStep: {
@@ -138,12 +140,12 @@ const styles = StyleSheet.create(Object.assign({}, globalStyles, {
   },
 
   directionStepText: {
-    color: '#6D6D6D'
+    color: '#6D6D6D',
   },
 
   directionStepComponent: {
+    color: '#273443',
     fontWeight: 'bold',
-    color: '#273443'
   },
 
   closeButton: {
@@ -151,9 +153,9 @@ const styles = StyleSheet.create(Object.assign({}, globalStyles, {
   },
 
   disclaimer: {
+    color: '#898989',
     fontSize: 10,
-    marginTop: 30,
     marginBottom: 20,
-    color: '#898989'
-  }
-}));
+    marginTop: 30,
+  },
+});

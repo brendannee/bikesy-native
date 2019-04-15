@@ -26,23 +26,26 @@ import { getRoute, reverseGeocode } from './services/api';
 
 import globalStyles from './styles/styles';
 
-type Props = {};
+import CoordinateType from './types/coordinate';
 
-type State = {
-  scenario: string,
-  directionsVisible: boolean,
-  aboutVisible: boolean,
-  startCoords?: mixed,
-  startAddress?: string,
-  endAddress?: string,
-  endCoords?: mixed,
-  directions?: mixed,
-  elevationProfile?: Array<[number, number]>,
-  path?: Array<[number, number]>,
-  locationType: string,
-  locationInputVisible: boolean,
-  enableMapInput: boolean,
-};
+interface Props {}
+
+interface State {
+  appIsReady: boolean;
+  scenario: string;
+  directionsVisible: boolean;
+  aboutVisible: boolean;
+  startCoords?: CoordinateType;
+  startAddress?: string;
+  endAddress?: string;
+  endCoords?: CoordinateType;
+  directions?: mixed;
+  elevationProfile?: Array<[number, number]>;
+  path?: Array<[number, number]>;
+  locationType?: string;
+  locationInputVisible: boolean;
+  enableMapInput: boolean;
+}
 
 function cacheImages(images) {
   return images.map(image => {
@@ -58,12 +61,12 @@ export default class App extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      appIsReady: false,
-      scenario: '1',
-      directionsVisible: false,
       aboutVisible: false,
-      locationInputVisible: false,
+      appIsReady: false,
+      directionsVisible: false,
       enableMapInput: false,
+      locationInputVisible: false,
+      scenario: '1',
     };
   }
 
@@ -82,7 +85,7 @@ export default class App extends Component<Props, State> {
     );
   }
 
-  showWelcomeAlert() {
+  showStartLocationAlert() {
     Alert.alert(
       'Welcome to Bikesy',
       "We'll find you the best bike route. Where do you want to start?",
@@ -101,11 +104,13 @@ export default class App extends Component<Props, State> {
           text: 'Choose From Map',
         },
         {
-          onPress: () => this.setState({
-            enableMapInput: false,
-            locationInputVisible: true,
-            locationType: 'start',
-          }),
+          onPress: () => {
+            this.setState({
+              enableMapInput: false,
+              locationInputVisible: true,
+              locationType: 'start',
+            });
+          },
           text: 'Enter an Address',
         },
       ],
@@ -118,12 +123,12 @@ export default class App extends Component<Props, State> {
       'Where would you like to go?',
       'Select your destination.',
       [
-        { 
-          text: 'Use My Current Location',
+        {
           onPress: () => {
             this.setState({ enableMapInput: false });
             this.setLocationFromUserLocation('end');
-          }
+          },
+          text: 'Use My Current Location',
         },
         {
           onPress: () => {
@@ -132,12 +137,14 @@ export default class App extends Component<Props, State> {
           text: 'Choose From Map',
         },
         {
+          onPress: () => {
+            this.setState({
+              enableMapInput: false,
+              locationInputVisible: true,
+              locationType: 'end',
+            });
+          },
           text: 'Enter an Address',
-          onPress: () => this.setState({
-            enableMapInput: false,
-            locationInputVisible: true,
-            locationType: 'end',
-          })
         },
       ],
       { cancelable: true }
@@ -157,7 +164,7 @@ export default class App extends Component<Props, State> {
         'Same start and destination location',
         'You chose the exact same start and destination locations. Try choosing two distinct places to route between.',
         [{ 
-          onPress: () => this.showWelcomeAlert(),
+          onPress: () => this.showStartLocationAlert(),
           text: 'OK',
         }],
         { cancelable: true }
@@ -198,7 +205,7 @@ export default class App extends Component<Props, State> {
     }, handleGeoLocationError);
   }
 
-  setLocationFromTextInput(address: string, coordinate: {}) {
+  setLocationFromTextInput(address: string, coordinate: CoordinateType) {
     const { locationType } = this.state;
     this.setState({ locationInputVisible: false });
 
@@ -222,7 +229,7 @@ export default class App extends Component<Props, State> {
     setTimeout(() => {
       if (!address || !coordinate) {
         if (locationType === 'start') {
-          this.showWelcomeAlert();
+          this.showStartLocationAlert();
         } else {
           this.showEndLocationAlert();
         }
@@ -232,7 +239,7 @@ export default class App extends Component<Props, State> {
     }, 500);
   }
 
-  setStartLocation(coordinate) {
+  setStartLocation(coordinate: CoordinateType) {
     if (!isWithinMapBoundaries(coordinate)) {
       return handleOutOfBoundsError();
     }
@@ -270,7 +277,7 @@ export default class App extends Component<Props, State> {
     });
   }
 
-  setEndLocation(coordinate) {
+  setEndLocation(coordinate: CoordinateType) {
     if (!isWithinMapBoundaries(coordinate)) {
       return handleOutOfBoundsError();
     }
@@ -312,7 +319,7 @@ export default class App extends Component<Props, State> {
       elevationProfile: undefined,
       path: undefined,
     });
-    this.showWelcomeAlert();
+    this.showStartLocationAlert();
   }
 
   render() {
@@ -324,7 +331,7 @@ export default class App extends Component<Props, State> {
           startAsync={this.loadAssets}
           onFinish={() => {
             this.setState({ appIsReady: true });
-            this.showWelcomeAlert();
+            this.showStartLocationAlert();
           }}
         />
       );
@@ -429,29 +436,31 @@ export default class App extends Component<Props, State> {
   }
 }
 
-const styles = StyleSheet.create(Object.assign({}, globalStyles, {
+const styles = StyleSheet.create({
+  ...globalStyles,
+
   container: {
+    alignItems: 'stretch',
     flex: 1,
-    alignItems: 'stretch'
   },
 
   addressSection: {
     flex: 1,
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
 
   addressContainer: {
     flex: 1,
-    padding: 5
+    padding: 5,
   },
 
   addressLabel: {
+    color: '#8b8b8b',
     fontSize: 10,
-    color: '#8b8b8b'
   },
 
   address: {
+    color: '#414141',
     fontSize: 11,
-    color: '#414141'
   },
-}))
+});

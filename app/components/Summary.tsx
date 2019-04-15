@@ -15,10 +15,10 @@ import {
 } from '../services/formatters';
 import { getDistanceMi } from '../services/map-utils';
 
-type Props = {
-  path: Array<[number, number]>,
-  elevationProfile: Array<[number, number]>
-};
+interface Props {
+  path: Array<[number, number]>;
+  elevationProfile: Array<[number, number]>;
+}
 
 export default class Summary extends Component<Props> {
   render() {
@@ -46,34 +46,34 @@ export default class Summary extends Component<Props> {
 
 const styles = StyleSheet.create({
   resultSummary: {
+    backgroundColor: '#FFFFFF',
     height: 130,
     maxHeight: 130,
-    backgroundColor: '#FFFFFF',
-    paddingTop: 2,
     paddingBottom: 4,
     paddingLeft: 8,
     paddingRight: 8,
+    paddingTop: 2,
   },
 
   overview: {
     flexDirection: 'row',
-    paddingBottom: 5,
     justifyContent: 'space-between',
+    paddingBottom: 5,
   },
 
   resultText: {
-    fontSize: 15,
     color: '#273443',
+    fontSize: 15,
+    fontWeight: 'bold',
     paddingBottom: 3,
     paddingTop: 4,
-    fontWeight: 'bold',
   },
 
   elevationText: {
-    fontSize: 15,
     color: '#273443',
+    fontSize: 15,
+    fontWeight: 'bold',
     paddingBottom: 10,
     paddingTop: 4,
-    fontWeight: 'bold',
   },
 });

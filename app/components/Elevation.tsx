@@ -5,13 +5,13 @@ import { VictoryLine } from "victory-native";
 
 import { metersToFeet, metersToMiles } from '../services/formatters';
 
-type Props = {
-  elevationProfile: Array<[number, number]>
+interface Props {
+  elevationProfile: Array<[number, number]>;
 }
 
-type State = {
-  width: number,
-  key: number
+interface State {
+  width: number;
+  key: number;
 }
 
 export default class Elevation extends Component<Props, State> {
@@ -88,27 +88,27 @@ export default class Elevation extends Component<Props, State> {
 
 const styles = StyleSheet.create({
   elevation: {
-    position: 'absolute',
-    top: 33,
     left: 0,
+    position: 'absolute',
     right: 0,
+    top: 33,
   },
 
   elevationLabelTop: {
-    position: 'absolute',
-    top: 0,
-    left: 3,
     fontSize: 10,
+    left: 3,
+    position: 'absolute',
     textAlign: 'right',
-    width: 30
+    top: 0,
+    width: 30,
   },
 
   elevationLabelBottom: {
-    position: 'absolute',
-    top: 60,
-    left: 3,
     fontSize: 10,
+    left: 3,
+    position: 'absolute',
     textAlign: 'right',
-    width: 30
-  }
+    top: 60,
+    width: 30,
+  },
 });

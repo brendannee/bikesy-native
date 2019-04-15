@@ -7,16 +7,15 @@ import {
   Linking,
   SafeAreaView,
   ScrollView,
-  Image,
   TouchableOpacity,
 } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 
 import globalStyles from '../styles/styles';
 
-type Props = {
-  modalVisible: boolean,
-  hideModal: () => mixed
+interface Props {
+  modalVisible: boolean;
+  hideModal: () => void;
 }
 
 export default class About extends Component<Props> {
@@ -94,20 +93,22 @@ export default class About extends Component<Props> {
   }
 }
 
-const styles = StyleSheet.create(Object.assign({}, globalStyles, {
+const styles = StyleSheet.create({
+  ...globalStyles,
+
   aboutLogo: {
-    marginBottom: 10
+    marginBottom: 10,
   },
 
   aboutTitle: {
     fontSize: 24,
-    paddingBottom: 10
+    paddingBottom: 10,
   },
 
   closeButton: {
     position: 'absolute',
-    top: 10,
     right: 15,
+    top: 10,
     zIndex: 1,
   },
-}))
+});
