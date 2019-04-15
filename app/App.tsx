@@ -45,6 +45,8 @@ interface State {
   locationType?: string;
   locationInputVisible: boolean;
   enableMapInput: boolean;
+  bikeLanes: string;
+  hills: string;
 }
 
 function cacheImages(images) {
@@ -85,23 +87,97 @@ export default class App extends Component<Props, State> {
     );
   }
 
-  showStartLocationAlert() {
+  showBikeLaneSelect() {
     Alert.alert(
       'Welcome to Bikesy',
-      "We'll find you the best bike route. Where do you want to start?",
+      "We'll find you the best bike route. First, how much would you like to stick to bike routes, low traffic roads and bike lanes?",
+      [
+        {
+          onPress: () => {
+            this.setState({
+              bikeLanes: 'high',
+            });
+            this.showHillSelect();
+          },
+          text: '🚴‍ Mostly bike paths and bike lanes',
+        },
+        {
+          onPress: () => {
+            this.setState({
+              bikeLanes: 'high',
+            });
+            this.showHillSelect();
+          },
+          text: '☺️ A reasonable route',
+        },
+        {
+          onPress: () => {
+            this.setState({
+              bikeLanes: 'high',
+            });
+            this.showHillSelect();
+          },
+          text: '🔜 A very direct route',
+        },
+      ],
+      { cancelable: true }
+    );
+  }
+
+  showHillSelect() {
+    Alert.alert(
+      'How much do you want to reroute to avoid hills?',
+      "We'll try to find a route that avoids going uphill as much as possible, and uses less steep roads where needed.",
+      [
+        {
+          onPress: () => {
+            this.setState({
+              hills: 'high',
+            });
+            this.showStartLocationAlert();
+          },
+          text: '↪️ Avoid at all costs',
+        },
+        {
+          onPress: () => {
+            this.setState({
+              hills: 'high',
+            });
+            this.showStartLocationAlert();
+          },
+          text: '☺️ A reasonable route',
+        },
+        {
+          onPress: () => {
+            this.setState({
+              hills: 'high',
+            });
+            this.showStartLocationAlert();
+          },
+          text: '⛰️📈 Bring on the hills!',
+        },
+      ],
+      { cancelable: true }
+    );
+  }
+
+  showStartLocationAlert() {
+    Alert.alert(
+      'Where do you want to start?',
+      'Select your start location.',
       [
         {
           onPress: () => {
             this.setState({ enableMapInput: false });
             this.setLocationFromUserLocation('start');
           },
-          text: 'Use My Current Location',
+          text: '📍 Use My Current Location',
         },
         {
           onPress: () => {
             this.setState({ enableMapInput: true });
           },
-          text: 'Choose From Map',
+          text: '🗺️ Choose From Map',
         },
         {
           onPress: () => {
@@ -111,7 +187,7 @@ export default class App extends Component<Props, State> {
               locationType: 'start',
             });
           },
-          text: 'Enter an Address',
+          text: '⌨️ Enter an Address',
         },
       ],
       { cancelable: true }
@@ -128,13 +204,13 @@ export default class App extends Component<Props, State> {
             this.setState({ enableMapInput: false });
             this.setLocationFromUserLocation('end');
           },
-          text: 'Use My Current Location',
+          text: '📍 Use My Current Location',
         },
         {
           onPress: () => {
             this.setState({ enableMapInput: true });
           },
-          text: 'Choose From Map',
+          text: '🗺️ Choose From Map',
         },
         {
           onPress: () => {
@@ -144,7 +220,7 @@ export default class App extends Component<Props, State> {
               locationType: 'end',
             });
           },
-          text: 'Enter an Address',
+          text: '⌨️ Enter an Address',
         },
       ],
       { cancelable: true }
@@ -331,7 +407,7 @@ export default class App extends Component<Props, State> {
           startAsync={this.loadAssets}
           onFinish={() => {
             this.setState({ appIsReady: true });
-            this.showStartLocationAlert();
+            this.showBikeLaneSelect();
           }}
         />
       );
@@ -396,41 +472,6 @@ export default class App extends Component<Props, State> {
           locationTypeText={locationTypeText}
           onSubmit={(address, coordinate) => this.setLocationFromTextInput(address, coordinate)}
         />
-      </View>
-    );
-  }
-
-  _renderAddresses() {
-    return (
-      <View style={styles.addressSection}>
-        {this._renderStartAddress()}
-        {this._renderEndAddress()}
-      </View>
-    );
-  }
-
-  _renderStartAddress() {
-    if (!this.state.startAddress) {
-      return <View style={styles.addressContainer} />;
-    }
-
-    return (
-      <View style={styles.addressContainer}>
-        <Text style={styles.addressLabel}>Start Address:</Text>
-        <Text style={styles.address}>{this.state.startAddress}</Text>
-      </View>
-    );
-  }
-
-  _renderEndAddress() {
-    if (!this.state.endAddress) {
-      return <View style={styles.addressContainer} />;
-    }
-
-    return (
-      <View style={styles.addressContainer}>
-        <Text style={styles.addressLabel}>End Address:</Text>
-        <Text style={styles.address}>{this.state.endAddress}</Text>
       </View>
     );
   }
