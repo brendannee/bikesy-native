@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import Modal from 'react-native-modal';
-import { FontAwesome } from '@expo/vector-icons';
+import { Ionicons, FontAwesome } from '@expo/vector-icons';
 
 import globalStyles from '../styles/styles';
 
@@ -21,6 +21,7 @@ const sessiontoken = uuidv4();
 type Props = {
   modalVisible: boolean,
   onSubmit: (address: string, [number, number]) => void,
+  locationTypeText: string,
 }
 
 export default class About extends Component<Props> {
@@ -31,7 +32,7 @@ export default class About extends Component<Props> {
   render() {
     const boundsCenter = getMapBoundariesCenter();
     const radius = getMapBoundariesRadius();
-    const { onSubmit, modalVisible } = this.props;
+    const { onSubmit, modalVisible, locationTypeText } = this.props;
 
     return (
       <Modal
@@ -39,9 +40,13 @@ export default class About extends Component<Props> {
         onBackButtonPress={onSubmit}
       >
         <SafeAreaView style={styles.modal}>
+          <TouchableOpacity onPress={onSubmit} style={styles.backControl}>
+            <Ionicons name="ios-arrow-back" size={26} style={styles.backButton} />
+            <Text style={styles.textLink}>Set location via map</Text>
+          </TouchableOpacity>
           <View style={styles.autocomplete}>
-            <GooglePlacesAutocomplete
-              placeholder='Search'
+            {modalVisible && <GooglePlacesAutocomplete
+              placeholder={`Enter ${locationTypeText} address`}
               minLength={2}
               autoFocus={true}
               returnKeyType={'search'}
@@ -67,12 +72,12 @@ export default class About extends Component<Props> {
               currentLocationLabel="Current location"
               nearbyPlacesAPI='GooglePlacesSearch'
               debounce={200}
-            />
+            />}
           </View>
           <TouchableOpacity onPress={onSubmit} style={styles.closeButton}>
             <View style={styles.button}>
               <FontAwesome name="close" size={24} style={styles.buttonIcon} />
-              <Text style={styles.buttonText}>Close</Text>
+              <Text style={styles.buttonText}>Cancel</Text>
             </View>
           </TouchableOpacity>
         </SafeAreaView>
@@ -82,6 +87,18 @@ export default class About extends Component<Props> {
 }
 
 const styles = StyleSheet.create(Object.assign({}, globalStyles, {
+  backControl: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 10,
+    marginBottom: 10,
+  },
+
+  backButton: {
+    color: '#226fbe',
+    marginRight: 6,
+  },
+
   closeButton: {
     paddingBottom: 10,
     paddingLeft: 10,
@@ -90,7 +107,7 @@ const styles = StyleSheet.create(Object.assign({}, globalStyles, {
 
   modal: {
     flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: 'white',
   },
 
   autocomplete: {

@@ -41,6 +41,7 @@ type State = {
   path?: Array<[number, number]>,
   locationType: string,
   locationInputVisible: boolean,
+  enableMapInput: boolean,
 };
 
 function cacheImages(images) {
@@ -62,6 +63,7 @@ export default class App extends Component<Props, State> {
       directionsVisible: false,
       aboutVisible: false,
       locationInputVisible: false,
+      enableMapInput: false,
     };
   }
 
@@ -86,12 +88,21 @@ export default class App extends Component<Props, State> {
       "We'll find you the best bike route. Where do you want to start?",
       [
         {
-          onPress: () => this.setLocationFromUserLocation('start'),
+          onPress: () => {
+            this.setState({ enableMapInput: false });
+            this.setLocationFromUserLocation('start');
+          },
           text: 'Use My Current Location',
         },
-        { text: 'Choose From Map' },
+        {
+          onPress: () => {
+            this.setState({ enableMapInput: true });
+          },
+          text: 'Choose From Map',
+        },
         {
           onPress: () => this.setState({
+            enableMapInput: false,
             locationInputVisible: true,
             locationType: 'start',
           }),
@@ -107,11 +118,23 @@ export default class App extends Component<Props, State> {
       'Where would you like to go?',
       'Select your destination.',
       [
-        { text: 'Use My Current Location', onPress: () => this.setLocationFromUserLocation('end') },
-        { text: 'Choose From Map' },
+        { 
+          text: 'Use My Current Location',
+          onPress: () => {
+            this.setState({ enableMapInput: false });
+            this.setLocationFromUserLocation('end');
+          }
+        },
+        {
+          onPress: () => {
+            this.setState({ enableMapInput: true });
+          },
+          text: 'Choose From Map',
+        },
         {
           text: 'Enter an Address',
           onPress: () => this.setState({
+            enableMapInput: false,
             locationInputVisible: true,
             locationType: 'end',
           })
@@ -180,12 +203,6 @@ export default class App extends Component<Props, State> {
     this.setState({ locationInputVisible: false });
 
     if (!address || !coordinate) {
-      if (locationType === 'start') {
-        this.showWelcomeAlert();
-      } else {
-        this.showEndLocationAlert();
-      }
-
       return;
     }
 
@@ -194,7 +211,6 @@ export default class App extends Component<Props, State> {
         startAddress: address,
         startCoords: coordinate,
       });
-      this.showEndLocationAlert();
     } else if (locationType === 'end') {
       this.setState({
         endAddress: address,
@@ -202,6 +218,18 @@ export default class App extends Component<Props, State> {
       });
       this.updateRoute();
     }
+
+    setTimeout(() => {
+      if (!address || !coordinate) {
+        if (locationType === 'start') {
+          this.showWelcomeAlert();
+        } else {
+          this.showEndLocationAlert();
+        }
+      } else if (locationType === 'start') {
+        this.showEndLocationAlert();
+      }
+    }, 500);
   }
 
   setStartLocation(coordinate) {
@@ -287,10 +315,6 @@ export default class App extends Component<Props, State> {
     this.showWelcomeAlert();
   }
 
-  componentDidMount() {
-    this.showWelcomeAlert();
-  }
-
   render() {
     StatusBar.setHidden(true);
 
@@ -298,7 +322,10 @@ export default class App extends Component<Props, State> {
       return (
         <AppLoading
           startAsync={this.loadAssets}
-          onFinish={() => this.setState({ appIsReady: true })}
+          onFinish={() => {
+            this.setState({ appIsReady: true });
+            this.showWelcomeAlert();
+          }}
         />
       );
     }
@@ -315,6 +342,7 @@ export default class App extends Component<Props, State> {
       aboutVisible,
       locationType,
       locationInputVisible,
+      enableMapInput,
     } = this.state;
 
     const locationTypeText = locationType === 'start' ? 'start' : 'destination';
@@ -322,8 +350,16 @@ export default class App extends Component<Props, State> {
     return (
       <View style={styles.container}>
         <Map
-          setStartLocation={coordinate => this.setStartLocation(coordinate)}
-          setEndLocation={coordinate => this.setEndLocation(coordinate)}
+          setStartLocation={coordinate => {
+            if (enableMapInput) {
+              this.setStartLocation(coordinate);
+            }
+          }}
+          setEndLocation={coordinate => {
+            if (enableMapInput) {
+              this.setEndLocation(coordinate);
+            }
+          }}
           startCoords={startCoords}
           endCoords={endCoords}
           startAddress={startAddress}
@@ -350,6 +386,7 @@ export default class App extends Component<Props, State> {
         <LocationInput
           title={`Enter a ${locationTypeText} address`}
           modalVisible={locationInputVisible}
+          locationTypeText={locationTypeText}
           onSubmit={(address, coordinate) => this.setLocationFromTextInput(address, coordinate)}
         />
       </View>

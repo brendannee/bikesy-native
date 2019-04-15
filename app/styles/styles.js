@@ -57,5 +57,10 @@ export default {
 
   paragraph: {
     lineHeight: 20
+  },
+
+  textLink: {
+    color: '#226fbe',
+    fontSize: 16
   }
 }
