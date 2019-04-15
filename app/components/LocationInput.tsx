@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import {
-  Modal,
   StyleSheet,
   View,
   SafeAreaView,
+  Text,
   TouchableOpacity,
 } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import Modal from 'react-native-modal';
 import { FontAwesome } from '@expo/vector-icons';
 
 import globalStyles from '../styles/styles';
@@ -19,7 +20,6 @@ const sessiontoken = uuidv4();
 
 type Props = {
   modalVisible: boolean,
-  hideModal: () => void,
   onSubmit: (address: string, [number, number]) => void,
 }
 
@@ -31,22 +31,14 @@ export default class About extends Component<Props> {
   render() {
     const boundsCenter = getMapBoundariesCenter();
     const radius = getMapBoundariesRadius();
-    const { onSubmit, hideModal, modalVisible } = this.props;
+    const { onSubmit, modalVisible } = this.props;
 
     return (
       <Modal
-        animationType="slide"
-        transparent={false}
-        visible={modalVisible}
-        onRequestClose={hideModal}
-        transparent={true}
+        isVisible={modalVisible}
+        onBackButtonPress={onSubmit}
       >
         <SafeAreaView style={styles.modal}>
-          <TouchableOpacity onPress={hideModal} style={styles.closeButton}>
-            <View style={styles.button}>
-              <FontAwesome name="close" size={24} style={styles.buttonIconSingle} />
-            </View>
-          </TouchableOpacity>
           <View style={styles.autocomplete}>
             <GooglePlacesAutocomplete
               placeholder='Search'
@@ -77,6 +69,12 @@ export default class About extends Component<Props> {
               debounce={200}
             />
           </View>
+          <TouchableOpacity onPress={onSubmit} style={styles.closeButton}>
+            <View style={styles.button}>
+              <FontAwesome name="close" size={24} style={styles.buttonIcon} />
+              <Text style={styles.buttonText}>Close</Text>
+            </View>
+          </TouchableOpacity>
         </SafeAreaView>
       </Modal>
     );
@@ -85,14 +83,17 @@ export default class About extends Component<Props> {
 
 const styles = StyleSheet.create(Object.assign({}, globalStyles, {
   closeButton: {
-    position: 'absolute',
-    top: 7,
-    right: 7,
-    zIndex: 1,
+    paddingBottom: 10,
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+
+  modal: {
+    flex: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
   },
 
   autocomplete: {
-    marginRight: 60,
     flex: 1,
   },
 }))

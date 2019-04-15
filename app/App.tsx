@@ -179,6 +179,16 @@ export default class App extends Component<Props, State> {
     const { locationType } = this.state;
     this.setState({ locationInputVisible: false });
 
+    if (!address || !coordinate) {
+      if (locationType === 'start') {
+        this.showWelcomeAlert();
+      } else {
+        this.showEndLocationAlert();
+      }
+
+      return;
+    }
+
     if (locationType === 'start') {
       this.setState({
         startAddress: address,
@@ -340,7 +350,6 @@ export default class App extends Component<Props, State> {
         <LocationInput
           title={`Enter a ${locationTypeText} address`}
           modalVisible={locationInputVisible}
-          hideModal={() => this.setState({ locationInputVisible: false })}
           onSubmit={(address, coordinate) => this.setLocationFromTextInput(address, coordinate)}
         />
       </View>
