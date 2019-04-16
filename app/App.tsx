@@ -32,7 +32,6 @@ interface Props {}
 
 interface State {
   appIsReady: boolean;
-  scenario: string;
   directionsVisible: boolean;
   loading: boolean;
   aboutVisible: boolean;
@@ -71,7 +70,6 @@ export default class App extends Component<Props, State> {
       enableMapInput: false,
       loading: false,
       locationInputVisible: false,
-      scenario: '1',
       startedFromCurrentLocation: false,
     };
   }
@@ -99,7 +97,7 @@ export default class App extends Component<Props, State> {
         {
           onPress: () => {
             this.setState({
-              bikeLanes: 'high',
+              bikeLanes: '1',
             });
             this.showHillSelect();
           },
@@ -108,7 +106,7 @@ export default class App extends Component<Props, State> {
         {
           onPress: () => {
             this.setState({
-              bikeLanes: 'high',
+              bikeLanes: '2',
             });
             this.showHillSelect();
           },
@@ -117,7 +115,7 @@ export default class App extends Component<Props, State> {
         {
           onPress: () => {
             this.setState({
-              bikeLanes: 'high',
+              bikeLanes: '3',
             });
             this.showHillSelect();
           },
@@ -136,7 +134,7 @@ export default class App extends Component<Props, State> {
         {
           onPress: () => {
             this.setState({
-              hills: 'high',
+              hills: '1',
             });
             this.showStartLocationAlert();
           },
@@ -145,7 +143,7 @@ export default class App extends Component<Props, State> {
         {
           onPress: () => {
             this.setState({
-              hills: 'high',
+              hills: '2',
             });
             this.showStartLocationAlert();
           },
@@ -154,7 +152,7 @@ export default class App extends Component<Props, State> {
         {
           onPress: () => {
             this.setState({
-              hills: 'high',
+              hills: '3',
             });
             this.showStartLocationAlert();
           },
@@ -248,7 +246,7 @@ export default class App extends Component<Props, State> {
   }
 
   updateRoute() {
-    const { startCoords, endCoords, scenario } = this.state;
+    const { startCoords, endCoords, bikeLanes, hills } = this.state;
 
     if (startCoords.latitude === endCoords.latitude && startCoords.longitude == endCoords.longitude) {
       this.setState({
@@ -273,11 +271,11 @@ export default class App extends Component<Props, State> {
       }
 
       this.setState({
-        path: undefined,
         loading: true,
+        path: undefined,
       });
 
-      getRoute(startCoords, endCoords, scenario)
+      getRoute(startCoords, endCoords, bikeLanes, hills)
         .then(results => {
           if (!this.state.startCoords) {
             return;
@@ -291,7 +289,16 @@ export default class App extends Component<Props, State> {
             path,
           });
         })
-        .catch(handleFetchError);
+        .catch(error => {
+          this.setState({
+            endCoords: undefined,
+            loading: false,
+            path: undefined,
+            startCoords: undefined,
+          });
+
+          handleFetchError(error);
+        });
     });
   }
 
