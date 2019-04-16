@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {
-  ActivityIndicator,
   Alert,
   NetInfo,
   StatusBar,
@@ -16,6 +15,7 @@ import {
   handleGeoLocationError,
   handleOutOfBoundsError,
 } from './components/Errors';
+import Loading from './components/Loading';
 import Map from './components/Map';
 import { AppLoading, Asset } from 'expo';
 
@@ -488,14 +488,7 @@ export default class App extends Component<Props, State> {
           locationTypeText={locationTypeText}
           onSubmit={(address, coordinate) => this.setLocationFromTextInput(address, coordinate)}
         />
-        {loading && <View style={styles.loadingContainer}>
-          <ActivityIndicator
-            animating={loading}
-            color="#226fbe"
-            size={'large'}
-            style={styles.loading}
-          />
-        </View>}
+        <Loading loading={loading} />
       </View>
     );
   }
@@ -507,47 +500,5 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'stretch',
     flex: 1,
-  },
-
-  addressSection: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-
-  addressContainer: {
-    flex: 1,
-    padding: 5,
-  },
-
-  addressLabel: {
-    color: '#8b8b8b',
-    fontSize: 10,
-  },
-
-  address: {
-    color: '#414141',
-    fontSize: 11,
-  },
-
-  loadingContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  loading: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    padding: 40,
-    borderRadius: 10,
-    borderColor: '#bbbbbb',
-    borderWidth: 1,
-    width: 100,
-    height: 100,
   },
 });

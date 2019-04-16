@@ -26,7 +26,7 @@ interface Props {
   locationTypeText: string;
 }
 
-export default class About extends Component<Props> {
+export default class LocationInput extends Component<Props> {
   constructor(props: Props) {
     super(props);
   }
