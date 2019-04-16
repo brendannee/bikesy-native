@@ -48,6 +48,7 @@ interface State {
   enableMapInput: boolean;
   bikeLanes: string;
   hills: string;
+  startedFromCurrentLocation: boolean;
 }
 
 function cacheImages(images) {
@@ -71,6 +72,7 @@ export default class App extends Component<Props, State> {
       loading: false,
       locationInputVisible: false,
       scenario: '1',
+      startedFromCurrentLocation: false,
     };
   }
 
@@ -164,67 +166,83 @@ export default class App extends Component<Props, State> {
   }
 
   showStartLocationAlert() {
+    this.setState({
+      startedFromCurrentLocation: false,
+    });
+
+    const alertOptions = [
+      {
+        onPress: () => {
+          this.setState({
+            enableMapInput: false,
+            startedFromCurrentLocation: true,
+          });
+          this.setLocationFromUserLocation('start');
+        },
+        text: '📍 Use My Current Location',
+      },
+      {
+        onPress: () => {
+          this.setState({ enableMapInput: true });
+        },
+        text: '🗺️ Choose From Map',
+      },
+      {
+        onPress: () => {
+          this.setState({
+            enableMapInput: false,
+            locationInputVisible: true,
+            locationType: 'start',
+          });
+        },
+        text: '⌨️ Enter an Address',
+      },
+    ];
+
     Alert.alert(
       'Where do you want to start?',
       'Select your start location.',
-      [
-        {
-          onPress: () => {
-            this.setState({ enableMapInput: false });
-            this.setLocationFromUserLocation('start');
-          },
-          text: '📍 Use My Current Location',
-        },
-        {
-          onPress: () => {
-            this.setState({ enableMapInput: true });
-          },
-          text: '🗺️ Choose From Map',
-        },
-        {
-          onPress: () => {
-            this.setState({
-              enableMapInput: false,
-              locationInputVisible: true,
-              locationType: 'start',
-            });
-          },
-          text: '⌨️ Enter an Address',
-        },
-      ],
+      alertOptions,
       { cancelable: true }
     );
   }
 
   showEndLocationAlert() {
+    const { startedFromCurrentLocation } = this.state;
+
+    const alertOptions = [
+      {
+        onPress: () => {
+          this.setState({ enableMapInput: true });
+        },
+        text: '🗺️ Choose From Map',
+      },
+      {
+        onPress: () => {
+          this.setState({
+            enableMapInput: false,
+            locationInputVisible: true,
+            locationType: 'end',
+          });
+        },
+        text: '⌨️ Enter an Address',
+      },
+    ];
+
+    if (!startedFromCurrentLocation) {
+      alertOptions.unshift({
+        onPress: () => {
+          this.setState({ enableMapInput: false });
+          this.setLocationFromUserLocation('end');
+        },
+        text: '📍 Use My Current Location',
+      });
+    }
+
     Alert.alert(
       'Where would you like to go?',
       'Select your destination.',
-      [
-        {
-          onPress: () => {
-            this.setState({ enableMapInput: false });
-            this.setLocationFromUserLocation('end');
-          },
-          text: '📍 Use My Current Location',
-        },
-        {
-          onPress: () => {
-            this.setState({ enableMapInput: true });
-          },
-          text: '🗺️ Choose From Map',
-        },
-        {
-          onPress: () => {
-            this.setState({
-              enableMapInput: false,
-              locationInputVisible: true,
-              locationType: 'end',
-            });
-          },
-          text: '⌨️ Enter an Address',
-        },
-      ],
+      alertOptions,
       { cancelable: true }
     );
   }
