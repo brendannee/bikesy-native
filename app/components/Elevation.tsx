@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     left: 0,
     position: 'absolute',
     right: 0,
-    top: 33,
+    bottom: 33,
   },
 
   elevationLabelTop: {

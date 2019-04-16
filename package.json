@@ -38,6 +38,7 @@
     "@turf/bbox": "^6.0.1",
     "@turf/distance": "^6.0.1",
     "@turf/length": "^6.0.2",
+    "@turf/midpoint": "^5.1.5",
     "@types/expo": "^32.0.10",
     "@types/react": "^16.8.13",
     "@types/react-native": "^0.57.43",

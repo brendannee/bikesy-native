@@ -15,8 +15,8 @@ import globalStyles from '../styles/styles';
 import CoordinateType from './types/coordinate';
 
 interface Props {
-  startCoords: any;
-  endCoords: any;
+  startCoords: CoordinateType;
+  endCoords: CoordinateType;
   setStartLocation: (coord: CoordinateType) => void;
   setEndLocation: (coord: CoordinateType) => void;
   startAddress: string;
@@ -203,12 +203,15 @@ export default class Map extends Component<Props, State> {
   }
 
   render() {
+    const { showAbout, path, elevationProfile, startCoords, endCoords } = this.props;
     return (
       <View style={styles.map}>
         <MapView
           style={styles.map}
           region={this.state.region}
           onPress={e => this.setMarker(e.nativeEvent.coordinate)}
+          onPoiClick={e => this.setMarker(e.nativeEvent.coordinate)}
+          onLongPress={e => this.setMarker(e.nativeEvent.coordinate)}
           mapType="mutedStandard"
           showsUserLocation={true}
           provider="google"
@@ -224,13 +227,18 @@ export default class Map extends Component<Props, State> {
           {this.getEndMarker()}
           {this.getRouteLine()}
         </MapView>
-        <TouchableOpacity onPress={this.props.showAbout} style={styles.logo}>
+        <TouchableOpacity onPress={showAbout} style={styles.logo}>
           <Image source={require('../assets/images/bikesy-logo.png')} />
         </TouchableOpacity>
         {this.renderSettingsButton()}
         {this.renderClearButton()}
         {this.renderDirectionsButton()}
-        <Summary path={this.props.path} elevationProfile={this.props.elevationProfile} />
+        <Summary
+          path={path}
+          elevationProfile={elevationProfile}
+          endCoords={endCoords}
+          startCoords={startCoords}
+        />
       </View>
     );
   }

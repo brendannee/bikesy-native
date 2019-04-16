@@ -1,4 +1,5 @@
 {
+  "airNowApiKey": "596AC6D9-CC3C-47E5-9D10-17990CC7ADEA",
   "googleMapsApiKey": "AIzaSyCdlv6F8kjbh2R6Rd-ULbhmfgUlFHzfDPk",
   "mapboxAccessToken": "pk.eyJ1IjoiYmlrZXN5IiwiYSI6ImNpb2Q5bGxidDAwMDF1bmt4ajcwNWNvMDkifQ.tjhechlMQUuWTlK5KgbafA",
   "mapboxStyleUrl": "mapbox://styles/bikesy/cisrx1j8h00022wqa7n21sddv",
@@ -11,5 +12,6 @@
   "boundsBottom": 37.459723,
   "boundsLeft": -122.769606,
   "lowBikeSpeedMph": 7.5,
-  "highBikeSpeedMph": 10
+  "highBikeSpeedMph": 10,
+  "openWeatherMapApiKey": "802aab6e4bc8a5ae4856eb7663a4adf9",
 }
