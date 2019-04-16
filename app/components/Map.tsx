@@ -26,6 +26,7 @@ interface Props {
   showAbout: () => any;
   showDirections: () => any;
   clearRoute: () => any;
+  enableMapInput: boolean;
 }
 
 interface State {
@@ -54,7 +55,11 @@ export default class Map extends Component<Props, State> {
   }
 
   setMarker(coordinate: CoordinateType) {
-    const { setStartLocation, setEndLocation, startCoords, endCoords } = this.props;
+    const { setStartLocation, setEndLocation, startCoords, endCoords, enableMapInput } = this.props;
+    if (!enableMapInput) {
+      return;
+    }
+
     if (!startCoords) {
       Vibration.vibrate();
       setStartLocation(coordinate);

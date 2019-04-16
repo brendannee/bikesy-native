@@ -291,21 +291,19 @@ export default class App extends Component<Props, State> {
     const { locationType } = this.state;
     this.setState({ locationInputVisible: false });
 
-    if (!address || !coordinate) {
-      return;
-    }
-
-    if (locationType === 'start') {
-      this.setState({
-        startAddress: address,
-        startCoords: coordinate,
-      });
-    } else if (locationType === 'end') {
-      this.setState({
-        endAddress: address,
-        endCoords: coordinate,
-      });
-      this.updateRoute();
+    if (address && coordinate) {
+      if (locationType === 'start') {
+        this.setState({
+          startAddress: address,
+          startCoords: coordinate,
+        });
+      } else if (locationType === 'end') {
+        this.setState({
+          endAddress: address,
+          endCoords: coordinate,
+        });
+        this.updateRoute();
+      }
     }
 
     setTimeout(() => {
@@ -440,16 +438,8 @@ export default class App extends Component<Props, State> {
     return (
       <View style={styles.container}>
         <Map
-          setStartLocation={coordinate => {
-            if (enableMapInput) {
-              this.setStartLocation(coordinate);
-            }
-          }}
-          setEndLocation={coordinate => {
-          if (enableMapInput) {
-              this.setEndLocation(coordinate);
-            }
-          }}
+          setStartLocation={coordinate => this.setStartLocation(coordinate)}
+          setEndLocation={coordinate => this.setEndLocation(coordinate)}
           startCoords={startCoords}
           endCoords={endCoords}
           startAddress={startAddress}
@@ -459,6 +449,7 @@ export default class App extends Component<Props, State> {
           showDirections={() => {this.setState({directionsVisible: true})}}
           showAbout={() => {this.setState({aboutVisible: true})}}
           elevationProfile={elevationProfile}
+          enableMapInput={enableMapInput}
         />
         <Directions
           path={path}
