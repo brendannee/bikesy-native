@@ -89,41 +89,50 @@ export default class App extends Component<Props, State> {
     );
   }
 
-  showBikeLaneSelect() {
+  setBikeLanes(bikeLanes: string) {
+    this.setState({ bikeLanes });
+    this.showHillSelect();
+  }
+
+  showBikeLaneSelect(isFirstLoad: boolean) {
+    const title = isFirstLoad ? 'Welcome to Bikesy' : 'What type of route would you like?';
+    const description = isFirstLoad
+      ? "We'll find you the best bike route. First, how much would you like to stick to bike routes, low traffic roads and bike lanes?"
+      : 'Would you like to stick to bike routes, low traffic roads and bike lanes, or have a more direct route?';
+
     Alert.alert(
-      'Welcome to Bikesy',
-      "We'll find you the best bike route. First, how much would you like to stick to bike routes, low traffic roads and bike lanes?",
+      title,
+      description,
       [
         {
-          onPress: () => {
-            this.setState({
-              bikeLanes: '1',
-            });
-            this.showHillSelect();
-          },
+          onPress: () => this.setBikeLanes('1'),
           text: '🚴‍ Mostly bike paths and bike lanes',
         },
         {
-          onPress: () => {
-            this.setState({
-              bikeLanes: '2',
-            });
-            this.showHillSelect();
-          },
+          onPress: () => this.setBikeLanes('2'),
           text: '☺️ A reasonable route',
         },
         {
-          onPress: () => {
-            this.setState({
-              bikeLanes: '3',
-            });
-            this.showHillSelect();
-          },
+          onPress: () => this.setBikeLanes('3'),
           text: '🔜 A very direct route',
         },
       ],
       { cancelable: true }
     );
+  }
+
+  setHills(hills: string) {
+    const { endCoords, startCoords } = this.state;
+
+    this.setState({ hills });
+
+    if (!startCoords) {
+      this.showStartLocationAlert();
+    } else if (!endCoords) {
+      this.showEndLocationAlert();
+    } else {
+      this.updateRoute();
+    }
   }
 
   showHillSelect() {
@@ -132,30 +141,15 @@ export default class App extends Component<Props, State> {
       "We'll try to find a route that avoids going uphill as much as possible, and uses less steep roads where needed.",
       [
         {
-          onPress: () => {
-            this.setState({
-              hills: '1',
-            });
-            this.showStartLocationAlert();
-          },
+          onPress: () => this.setHills('1'),
           text: '↪️ Avoid at all costs',
         },
         {
-          onPress: () => {
-            this.setState({
-              hills: '2',
-            });
-            this.showStartLocationAlert();
-          },
+          onPress: () => this.setHills('2'),
           text: '☺️ A reasonable route',
         },
         {
-          onPress: () => {
-            this.setState({
-              hills: '3',
-            });
-            this.showStartLocationAlert();
-          },
+          onPress: () => this.setHills('3'),
           text: '⛰️📈 Bring on the hills!',
         },
       ],
@@ -436,7 +430,7 @@ export default class App extends Component<Props, State> {
           startAsync={this.loadAssets}
           onFinish={() => {
             this.setState({ appIsReady: true });
-            this.showBikeLaneSelect();
+            this.showBikeLaneSelect(true);
           }}
         />
       );
@@ -471,6 +465,7 @@ export default class App extends Component<Props, State> {
           endAddress={endAddress}
           path={path}
           clearRoute={() => this.clearRoute()}
+          changeSettings={() => this.showBikeLaneSelect()}
           showDirections={() => {this.setState({directionsVisible: true})}}
           showAbout={() => {this.setState({aboutVisible: true})}}
           elevationProfile={elevationProfile}

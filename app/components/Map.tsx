@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, Vibration, View } from 'react-native';
 import { MapView } from 'expo';
-import { Entypo, MaterialIcons } from '@expo/vector-icons';
+import { Entypo, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import Summary from './Summary';
 
 import _ from 'lodash';
@@ -26,6 +26,7 @@ interface Props {
   showAbout: () => any;
   showDirections: () => any;
   clearRoute: () => any;
+  changeSettings: () => any;
   enableMapInput: boolean;
 }
 
@@ -155,7 +156,7 @@ export default class Map extends Component<Props, State> {
     }
   }
 
-  _renderClearButton() {
+  renderClearButton() {
     const { startCoords, clearRoute } = this.props;
     if (!startCoords) {
       return null;
@@ -171,7 +172,19 @@ export default class Map extends Component<Props, State> {
     );
   }
 
-  _renderDirectionsButton() {
+  renderSettingsButton() {
+    const { changeSettings } = this.props;
+    return (
+      <TouchableOpacity onPress={() => changeSettings()} style={styles.settingsButton}>
+        <View style={styles.button}>
+          <Ionicons name="ios-settings" size={20} style={styles.buttonIcon} />
+          <Text style={styles.buttonText}>Settings</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+
+  renderDirectionsButton() {
     const { path, showDirections } = this.props;
     if (!path) {
       return null;
@@ -214,8 +227,9 @@ export default class Map extends Component<Props, State> {
         <TouchableOpacity onPress={this.props.showAbout} style={styles.logo}>
           <Image source={require('../assets/images/bikesy-logo.png')} />
         </TouchableOpacity>
-        {this._renderClearButton()}
-        {this._renderDirectionsButton()}
+        {this.renderSettingsButton()}
+        {this.renderClearButton()}
+        {this.renderDirectionsButton()}
         <Summary path={this.props.path} elevationProfile={this.props.elevationProfile} />
       </View>
     );
@@ -248,7 +262,7 @@ const styles = StyleSheet.create({
     width: 120,
   },
 
-  clearButton: {
+  settingsButton: {
     position: 'absolute',
     ...ifIphoneX(
       {
@@ -256,6 +270,20 @@ const styles = StyleSheet.create({
       },
       {
         top: 10,
+      }
+    ),
+    right: 15,
+    zIndex: 1,
+  },
+
+  clearButton: {
+    position: 'absolute',
+    ...ifIphoneX(
+      {
+        top: 80,
+      },
+      {
+        top: 50,
       }
     ),
     right: 15,
