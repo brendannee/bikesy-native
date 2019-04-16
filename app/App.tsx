@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import {
+  ActivityIndicator,
   Alert,
   NetInfo,
   StatusBar,
   StyleSheet,
-  Text,
-  View
+  View,
 } from 'react-native';
 import About from './components/About';
 import Directions from './components/Directions';
@@ -34,6 +34,7 @@ interface State {
   appIsReady: boolean;
   scenario: string;
   directionsVisible: boolean;
+  loading: boolean;
   aboutVisible: boolean;
   startCoords?: CoordinateType;
   startAddress?: string;
@@ -67,6 +68,7 @@ export default class App extends Component<Props, State> {
       appIsReady: false,
       directionsVisible: false,
       enableMapInput: false,
+      loading: false,
       locationInputVisible: false,
       scenario: '1',
     };
@@ -252,7 +254,10 @@ export default class App extends Component<Props, State> {
         return this.showNoConnectionAlert();
       }
 
-      this.setState({ path: undefined });
+      this.setState({
+        path: undefined,
+        loading: true,
+      });
 
       getRoute(startCoords, endCoords, scenario)
         .then(results => {
@@ -264,6 +269,7 @@ export default class App extends Component<Props, State> {
           this.setState({
             directions: results.directions,
             elevationProfile: results.elevation_profile,
+            loading: false,
             path,
           });
         })
@@ -414,6 +420,7 @@ export default class App extends Component<Props, State> {
     }
 
     const {
+      loading,
       startCoords,
       endCoords,
       startAddress,
@@ -439,7 +446,7 @@ export default class App extends Component<Props, State> {
             }
           }}
           setEndLocation={coordinate => {
-            if (enableMapInput) {
+          if (enableMapInput) {
               this.setEndLocation(coordinate);
             }
           }}
@@ -472,6 +479,14 @@ export default class App extends Component<Props, State> {
           locationTypeText={locationTypeText}
           onSubmit={(address, coordinate) => this.setLocationFromTextInput(address, coordinate)}
         />
+        {loading && <View style={styles.loadingContainer}>
+          <ActivityIndicator
+            animating={loading}
+            color="#226fbe"
+            size={'large'}
+            style={styles.loading}
+          />
+        </View>}
       </View>
     );
   }
@@ -503,5 +518,27 @@ const styles = StyleSheet.create({
   address: {
     color: '#414141',
     fontSize: 11,
+  },
+
+  loadingContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  loading: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    padding: 40,
+    borderRadius: 10,
+    borderColor: '#bbbbbb',
+    borderWidth: 1,
+    width: 100,
+    height: 100,
   },
 });
