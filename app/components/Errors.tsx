@@ -19,11 +19,16 @@ export const handleError = (error) => {
   );
 };
 
-export const handleGeoLocationError = (error) => {
+export const handleGeoLocationError = (onPress: () => void) => {
   Alert.alert(
     'Unable to geolocate you',
     'Choose a start location by clicking on the map',
-    [{ text: 'OK' }],
+    [
+      {
+        onPress,
+        text: 'OK',
+      },
+    ],
     { cancelable: false }
   );
 };

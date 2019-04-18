@@ -303,7 +303,11 @@ export default class App extends Component<Props, State> {
       } else if (locationType === 'end') {
         this.setEndLocation(result.coords);
       }
-    }, handleGeoLocationError);
+    }, () => {
+      handleGeoLocationError(() => {
+        this.showStartLocationAlert();
+      });
+    });
   }
 
   setLocationFromTextInput(address: string, coordinate: CoordinateType) {
