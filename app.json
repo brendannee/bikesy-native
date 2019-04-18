@@ -10,6 +10,9 @@
       "bundleIdentifier": "com.blinktaginc.bikesy",
       "config": {
         "googleMapsApiKey": "AIzaSyCdlv6F8kjbh2R6Rd-ULbhmfgUlFHzfDPk"
+      },
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "This app uses your location to show where you currently are on a map and to allow you to plan trips starting from or ending at your current location."
       }
     },
     "android": {
