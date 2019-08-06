@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, Vibration, View } from 'react-native';
-import { MapView } from 'expo';
+import MapView from 'react-native-maps';
 import { Entypo, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import Summary from './Summary';
 

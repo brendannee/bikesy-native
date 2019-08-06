@@ -17,7 +17,8 @@ import {
 } from './components/Errors';
 import Loading from './components/Loading';
 import Map from './components/Map';
-import { AppLoading, Asset } from 'expo';
+import { AppLoading } from 'expo';
+import { Asset } from 'expo-asset';
 
 import polyline from '@mapbox/polyline';
 
