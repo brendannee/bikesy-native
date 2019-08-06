@@ -18,7 +18,7 @@
     "android": {
       "package": "com.blinktaginc.bikesy"
     },
-    "sdkVersion": "33.0.0",
+    "sdkVersion": "34.0.0",
     "splash": {
       "image": "./app/assets/splash.png",
       "backgroundColor": "#333333",
