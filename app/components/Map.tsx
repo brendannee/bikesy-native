@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, Vibration, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MapView from 'react-native-maps';
 import { Entypo, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import Summary from './Summary';
@@ -62,10 +62,8 @@ export default class Map extends Component<Props, State> {
     }
 
     if (!startCoords) {
-      Vibration.vibrate();
       setStartLocation(coordinate);
     } else if (!endCoords) {
-      Vibration.vibrate();
       setEndLocation(coordinate);
     }
   }
