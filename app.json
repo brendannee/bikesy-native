@@ -3,7 +3,7 @@
     "name": "Bikesy",
     "description": "Avoid hills and find bike routes with Bikesy, an innovative and open-source bike mapping system specially designed to find flat, safe, and fast bike routes anywhere in the San Francisco Bay Area. San Francisco isn’t New York – they might have taller buildings, but we’ve got bigger hills. Since we couldn’t find another service that lets you choose slightly longer but less steep routes, we made our own. Even better, Bikesy automatically gives you an elevation profile for your ride to help you prepare for the tough parts.",
     "slug": "bikesy",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "orientation": "portrait",
     "icon": "./app/assets/app-icon.png",
     "ios": {
@@ -20,7 +20,7 @@
       "package": "com.blinktaginc.bikesy",
       "versionCode": 2
     },
-    "sdkVersion": "34.0.0",
+    "sdkVersion": "35.0.0",
     "splash": {
       "image": "./app/assets/splash.png",
       "backgroundColor": "#333333",
