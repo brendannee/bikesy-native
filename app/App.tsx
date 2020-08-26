@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import {
   Alert,
-  NetInfo,
   StatusBar,
   StyleSheet,
   View,
 } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
 import About from './components/About';
 import Directions from './components/Directions';
 import LocationInput from './components/LocationInput';
@@ -260,7 +260,7 @@ export default class App extends Component<Props, State> {
       );
     }
 
-    NetInfo.isConnected.fetch().done(isConnected => {
+    NetInfo.fetch().then(({ isConnected }) => {
       if (!isConnected) {
         return this.showNoConnectionAlert();
       }
@@ -348,7 +348,7 @@ export default class App extends Component<Props, State> {
       return handleOutOfBoundsError();
     }
 
-    NetInfo.isConnected.fetch().done(isConnected => {
+    NetInfo.fetch().then(({ isConnected }) => {
       if (!isConnected) {
         return this.showNoConnectionAlert();
       }
@@ -386,7 +386,7 @@ export default class App extends Component<Props, State> {
       return handleOutOfBoundsError();
     }
 
-    NetInfo.isConnected.fetch().done(isConnected => {
+    NetInfo.fetch().then(({ isConnected }) => {
       if (!isConnected) {
         return this.showNoConnectionAlert();
       }
